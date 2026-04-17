@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>arbitrage — {{ mode }}</title>
+  <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+           margin: 0; padding: 1.5rem; background: #0e1117; color: #e6edf3; }
+    h1 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: 0.02em; }
+    h1 .mode { padding: 0.15em 0.5em; border-radius: 4px; font-size: 0.8em;
+               margin-left: 0.6em; background: #1f6feb; color: white; }
+    h1 .mode.live { background: #da3633; }
+    .grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+    @media (min-width: 960px) { .grid { grid-template-columns: 1fr 1fr; } }
+    section { background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+              padding: 1rem; }
+    section h2 { font-size: 0.85rem; margin: 0 0 0.75rem; text-transform: uppercase;
+                 letter-spacing: 0.05em; color: #8b949e; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 0.4rem 0.55rem; border-bottom: 1px solid #21262d; }
+    th { color: #8b949e; font-weight: 600; }
+    .num { font-variant-numeric: tabular-nums; text-align: right; }
+    .pos { color: #3fb950; }
+    .neg { color: #f85149; }
+    .badge { padding: 0.1em 0.45em; border-radius: 4px; font-size: 0.75em; background: #30363d; }
+    .badge.redeemed { background: #1f6f3e; }
+    .badge.failed   { background: #8b1a1a; }
+    .badge.pending_resolution { background: #5a4200; }
+    .badge.invalid  { background: #3b1f5a; }
+    button { background: #21262d; color: #e6edf3; border: 1px solid #30363d;
+             padding: 0.4em 0.9em; border-radius: 4px; cursor: pointer; }
+    button.kill { background: #8b1a1a; border-color: #da3633; }
+    button.unkill { background: #1f6f3e; border-color: #3fb950; }
+  </style>
+</head>
+<body>
+  <h1>arbitrage
+    <span class="mode {% if mode == 'live' %}live{% endif %}">{{ mode }}</span>
+  </h1>
+
+  <div class="grid">
+    <section id="pnl"
+             hx-get="/fragments/pnl" hx-trigger="load, every 3s" hx-swap="innerHTML">
+      loading...
+    </section>
+
+    <section id="baskets"
+             hx-get="/fragments/baskets" hx-trigger="load, every 3s" hx-swap="innerHTML">
+      loading...
+    </section>
+
+    <section id="opps" style="grid-column: 1 / -1;"
+             hx-get="/fragments/opportunities" hx-trigger="load, every 2s" hx-swap="innerHTML">
+      loading...
+    </section>
+  </div>
+</body>
+</html>

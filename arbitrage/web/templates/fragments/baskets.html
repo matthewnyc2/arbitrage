@@ -1,0 +1,29 @@
+<h2>baskets</h2>
+<table>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>event</th>
+      <th>mode</th>
+      <th class="num">count</th>
+      <th class="num">cost</th>
+      <th>status</th>
+      <th class="num">pnl</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for b in rows %}
+    <tr>
+      <td>{{ b.id }}</td>
+      <td>{{ b.event_title }}</td>
+      <td>{{ "paper" if b.is_paper else "live" }}</td>
+      <td class="num">{{ b.basket_count }}</td>
+      <td class="num">{{ b.total_cost_usd }}</td>
+      <td><span class="badge {{ b.status }}">{{ b.status }}</span></td>
+      <td class="num {% if b.realized_pnl_usd and b.realized_pnl_usd.startswith('-') %}neg{% elif b.realized_pnl_usd %}pos{% endif %}">{{ b.realized_pnl_usd or '—' }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" style="color:#8b949e;">no baskets yet</td></tr>
+  {% endfor %}
+  </tbody>
+</table>

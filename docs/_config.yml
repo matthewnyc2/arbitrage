@@ -1,0 +1,5 @@
+# Prevent Jekyll from trying to process the site; we ship plain HTML/CSS/JS.
+theme: null
+plugins: []
+include:
+  - assets

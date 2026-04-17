@@ -1,0 +1,55 @@
+services:
+  init:
+    build: .
+    command: ["init"]
+    environment:
+      - ARB_MODE=paper
+      - ARB_DB_PATH=/data/arbitrage.db
+    volumes:
+      - arb_data:/data
+
+  discover:
+    build: .
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    command: ["discover", "--loop", "--interval", "180"]
+    environment:
+      - ARB_MODE=paper
+      - ARB_DB_PATH=/data/arbitrage.db
+    volumes:
+      - arb_data:/data
+    restart: unless-stopped
+
+  scan:
+    build: .
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    command: ["scan"]
+    environment:
+      - ARB_MODE=paper
+      - ARB_DB_PATH=/data/arbitrage.db
+    volumes:
+      - arb_data:/data
+    restart: unless-stopped
+
+  web:
+    build: .
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    command: ["web"]
+    environment:
+      - ARB_MODE=paper
+      - ARB_DB_PATH=/data/arbitrage.db
+      - ARB_WEB_HOST=0.0.0.0
+      - ARB_WEB_PORT=8000
+    volumes:
+      - arb_data:/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  arb_data:

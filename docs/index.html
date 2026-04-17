@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Polymarket Arbitrage Scanner — portfolio</title>
+<meta name="description" content="Production-grade Python asyncio scanner for NegRisk multi-outcome arbitrage on Polymarket. Live book state, depth-clipped edge math, paper-trading mode." />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <h1>Polymarket Arbitrage Scanner</h1>
+    <p class="tagline">
+      Production-grade Python asyncio system that detects NegRisk multi-outcome
+      arbitrage on Polymarket in real time, simulates fills against the live
+      order book with a realistic latency penalty, and can sign and submit live
+      orders behind hard risk caps.
+    </p>
+
+    <div class="badges">
+      <span class="badge pos">60 tests passing</span>
+      <span class="badge pos">94% core-math coverage</span>
+      <span class="badge">python 3.12</span>
+      <span class="badge">asyncio</span>
+      <span class="badge">fastapi</span>
+      <span class="badge">websockets</span>
+      <span class="badge">web3.py</span>
+      <span class="badge">sqlite (wal)</span>
+      <span class="badge">docker</span>
+      <span class="badge">MIT</span>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn primary" href="demo.html">Live demo →</a>
+      <a class="btn" href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://github.com/matthewnyc2/arbitrage#quickstart" target="_blank" rel="noopener">Quickstart</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <h2><span class="rule"></span>The arbitrage, in one paragraph</h2>
+    <p>
+      Polymarket hosts <em>categorical</em> events — "Who wins the 2028 US Election?" —
+      where every outcome trades as its own YES token on a public CLOB. Because
+      exactly one outcome must win, the fair prices across all outcomes are bound
+      to sum to exactly <strong>$1</strong>. When the sum of best-asks drops below
+      $1, buying one share of every outcome locks in a guaranteed $1 payout on
+      resolution. The challenge isn't detecting the mispricing — it's racing
+      faster bots, walking order-book depth honestly so edge isn't a fantasy at
+      top-of-book, paying realistic Polygon gas, and surviving UMA resolution
+      disputes that can void a "risk-free" basket. This project builds the full
+      pipeline for that strategy, end to end, with paper mode as the primary
+      validation tool.
+    </p>
+
+    <div class="metrics-grid" style="margin-top: 2rem;">
+      <div class="metric"><span class="val">~2k</span><span class="label">lines of python</span></div>
+      <div class="metric"><span class="val">60</span><span class="label">unit tests</span></div>
+      <div class="metric"><span class="val">94%</span><span class="label">coverage (core)</span></div>
+      <div class="metric"><span class="val">~5s</span><span class="label">test suite time</span></div>
+      <div class="metric"><span class="val">2</span><span class="label">modes (paper / live)</span></div>
+      <div class="metric"><span class="val">7</span><span class="label">risk caps enforced</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="rule"></span>What's in the box</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Gamma REST discovery</h3>
+        <p>Paginates Polymarket's <code>/events</code> endpoint, filters to active
+        NegRisk categoricals, normalizes into pydantic models, upserts idempotently
+        into SQLite, and marks dropped events inactive.</p>
+      </div>
+      <div class="card">
+        <h3>WebSocket L2 maintainer</h3>
+        <p>Subscribes to the CLOB <code>market</code> channel. Parses <code>book</code>
+        snapshots and <code>price_change</code> deltas against a per-token sorted
+        price ladder. Shards across sockets, keeps connections alive with PING/PONG,
+        reconnects with exponential backoff.</p>
+      </div>
+      <div class="card">
+        <h3>Opportunity engine</h3>
+        <p>On every book tick, walks depth across all outcomes of the affected
+        event, computes the basket size that maximizes net expected profit after
+        fees and amortised gas, emits a typed <code>Opportunity</code> record
+        only when the edge clears a configured threshold.</p>
+      </div>
+      <div class="card">
+        <h3>Paper executor</h3>
+        <p>Simulates IOC fills at <em>detection time + latency penalty</em> against
+        the live book, so levels that vanished during the simulated latency
+        window model "being beaten by a faster bot." Writes baskets + per-leg fills
+        to SQLite; closes out PnL when the underlying event resolves.</p>
+      </div>
+      <div class="card">
+        <h3>Live executor (gated)</h3>
+        <p>Signs EIP-712 orders through <code>py-clob-client</code>, submits FAK
+        across all legs in parallel, attempts to unwind any partial fill, calls
+        <code>NegRiskAdapter.redeemPositions</code> on the winning leg. Default
+        <code>dry_run=True</code>; real broadcast requires an explicit operator flip.</p>
+      </div>
+      <div class="card">
+        <h3>Risk gate</h3>
+        <p>Hard caps before any order touches the network: max basket USD, max
+        open baskets (global and per-event), daily loss stop, kill-switch file,
+        proximity-to-resolution skip. Every deny is logged with its reason.</p>
+      </div>
+      <div class="card">
+        <h3>FastAPI + HTMX dashboard</h3>
+        <p>Single-page viewer that polls SQLite every few seconds for live
+        opportunities, open and historical baskets, realized paper PnL, and mode
+        indicator. One-click kill-switch toggle. No SPA build step.</p>
+      </div>
+      <div class="card">
+        <h3>Docker + CLI</h3>
+        <p>Single-binary CLI (<code>arb init | discover | scan | web | resolve</code>)
+        plus Dockerfile + compose file for a one-command local run. Runs on a
+        $5/month GCP VM or on a laptop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="rule"></span>Architecture</h2>
+    <pre class="arch-diagram">
+        Gamma REST                 CLOB WebSocket
+            │                            │
+            ▼                            ▼
+     Event discovery              L2 Book Maintainer
+    (active negRisk)           (per token, in-memory)
+            │                            │
+            └────────────┬───────────────┘
+                         ▼
+                Opportunity Engine
+      (depth-walk, fee-net, gas-amortized threshold)
+                         │
+                         ▼
+                    Risk Gate
+       (basket caps, daily loss, kill switch)
+                         │
+            ┌────────────┴───────────────┐
+            ▼                            ▼
+      Paper Executor              Live Executor
+   (latency-penalized          (sign + FAK + redeem)
+    sim fills + PnL)                     │
+            │                            │
+            └────────────┬───────────────┘
+                         ▼
+                    SQLite (WAL)
+                         │
+                         ▼
+             FastAPI + HTMX dashboard</pre>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="rule"></span>Run it yourself</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Local (Python 3.12+)</h3>
+<pre><code>git clone https://github.com/matthewnyc2/arbitrage
+cd arbitrage
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env
+
+arb init
+arb discover
+arb scan &amp;
+arb web
+# http://127.0.0.1:8000</code></pre>
+      </div>
+      <div class="card">
+        <h3>Docker</h3>
+<pre><code>docker compose up
+# http://127.0.0.1:8000</code></pre>
+        <p style="margin-top: 1rem;">Stays in paper mode — no keys, no capital at
+        risk. Kill with <span class="kbd">Ctrl+C</span> or by touching
+        <code>./KILL</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="rule"></span>What this is (and isn't)</h2>
+    <p>
+      This is a working engineering project — a reference for how to structure a
+      latency-sensitive async trading bot with disciplined risk gates, honest
+      simulated fills, and a testable core. It is <strong>not</strong> a
+      get-rich tool. The retail edge in public prediction-market arbitrage has
+      mostly been competed away by professional market makers with colocation,
+      custom hardware, and seven-figure working capital. Paper mode here exists
+      specifically to answer the question <em>is there any edge left for a solo
+      Python bot</em>, before a single dollar is risked.
+    </p>
+    <p>
+      The architecture transfers cleanly to any order-book venue (Kalshi,
+      Manifold, CEX spot markets) — swap the REST + WS adapters and the
+      engine keeps working.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>
+    <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">GitHub</a> ·
+    <a href="demo.html">Live demo</a> ·
+    MIT licensed
+  </p>
+  <p class="small">Built with Python, asyncio, FastAPI, HTMX, web3.py, and a lot of Polymarket docs reading.</p>
+</footer>
+
+</body>
+</html>

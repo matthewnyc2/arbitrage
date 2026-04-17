@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>arbitrage — status</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    max-width: 780px; margin: 2rem auto; padding: 0 1.25rem;
+    line-height: 1.55; color: #1b1f23;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 0.2rem; }
+  h2 { font-size: 1.2rem; margin-top: 2rem; padding-bottom: 0.2rem;
+       border-bottom: 1px solid #e1e4e8; }
+  h3 { font-size: 1rem; margin-top: 1.4rem; }
+  p, li { font-size: 0.98rem; }
+  code, pre { font-family: "SF Mono", Menlo, Consolas, monospace; }
+  code { background: #f4f5f7; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+  pre { background: #f4f5f7; padding: 0.75rem 1rem; border-radius: 5px;
+        overflow-x: auto; font-size: 0.88rem; line-height: 1.45; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px;
+         font-size: 0.75rem; background: #dff0d8; color: #2d6a2d;
+         vertical-align: middle; margin-left: 0.5rem; }
+  .tag.warn { background: #fff3cd; color: #7a5d00; }
+  .tag.cold { background: #e6f0ff; color: #1a4b91; }
+  .rule { margin: 2rem 0; border: 0; border-top: 1px solid #e1e4e8; }
+  blockquote { border-left: 3px solid #d0d7de; margin: 1rem 0; padding: 0.4rem 1rem;
+               color: #57606a; background: #f9f9fa; }
+  table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #e1e4e8;
+           font-size: 0.92rem; }
+  th { background: #f4f5f7; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0e1117; color: #e6edf3; }
+    code, pre { background: #161b22; color: #e6edf3; }
+    h2 { border-color: #30363d; }
+    th { background: #161b22; }
+    th, td { border-color: #30363d; }
+    blockquote { color: #8b949e; background: #161b22; border-color: #30363d; }
+    .tag { background: #1f3a20; color: #9fd39f; }
+    .tag.warn { background: #3a3200; color: #ffe58a; }
+    .tag.cold { background: #0f2545; color: #9dc4ff; }
+  }
+</style>
+</head>
+<body>
+
+<h1>arbitrage — where we are <span class="tag">paper mode</span></h1>
+<p><em>Plain-English status doc. Read before you run anything against real money.</em></p>
+
+<hr class="rule" />
+
+<h2>1. What the status is</h2>
+
+<p>
+The bot is <strong>code-complete for Phase 1</strong> (paper trading) and has a
+<strong>functional-but-unused skeleton for Phase 2</strong> (live trading). It
+has never connected to the live Polymarket firehose yet, and it has never
+placed a real order. Everything that exists has been unit-tested against
+fake data — not yet validated against the real market.
+</p>
+
+<table>
+  <thead><tr><th>Piece</th><th>State</th><th>What that means</th></tr></thead>
+  <tbody>
+    <tr><td>SQLite database layer</td><td>done</td>
+        <td>Tables for events, outcomes, opportunities, baskets, fills, resolutions.</td></tr>
+    <tr><td>Gamma REST discovery</td><td>done</td>
+        <td>Pulls the public list of Polymarket events and filters to the "negRisk" categoricals we can arb.</td></tr>
+    <tr><td>WebSocket L2 order book</td><td>done, never live-tested</td>
+        <td>Parses Polymarket's published message format. Hasn't shaken hands with the real server yet.</td></tr>
+    <tr><td>Opportunity engine (math)</td><td>done</td>
+        <td>For every event, walks the depth on every outcome, computes the best basket size, and reports the net edge after fees + gas.</td></tr>
+    <tr><td>Paper executor</td><td>done</td>
+        <td>Pretends to buy, models a 250&nbsp;ms "someone beat me" penalty, records the outcome. No keys needed.</td></tr>
+    <tr><td>Live executor</td><td>wired, gated off</td>
+        <td>Will sign and submit orders through <code>py-clob-client</code>. Stays in dry-run mode unless you explicitly flip it.</td></tr>
+    <tr><td>Risk gate</td><td>done</td>
+        <td>Hard caps on basket size, open-basket count per event, daily loss, and a kill-switch file.</td></tr>
+    <tr><td>Dashboard</td><td>done</td>
+        <td>One HTML page, auto-refreshing. Shows opportunities, baskets, paper PnL, mode, and a kill button.</td></tr>
+    <tr><td>Resolution watcher</td><td>manual only</td>
+        <td>You can mark an event as resolved with <code>arb resolve</code>. There is no automatic poller yet — that's Phase&nbsp;3.</td></tr>
+    <tr><td>Tests</td><td>60 passing</td>
+        <td>~5 seconds to run. Core math is ≥90% covered. HTTP/socket code is thinner (~55%).</td></tr>
+  </tbody>
+</table>
+
+<blockquote>
+Bottom line: you can run it today in paper mode against live Polymarket data
+and watch what the engine would have done. You <em>cannot</em> yet point it at
+a funded wallet and walk away.
+</blockquote>
+
+<h2>2. What it can do</h2>
+
+<h3>The trade it looks for</h3>
+<p>
+Polymarket hosts "categorical" markets — say, "Who wins the 2028 US Election?"
+with one YES token per candidate. Because exactly one candidate wins, the
+fair prices of every YES token must sum to exactly $1. When someone in the
+order book is selling those YES tokens cheaply enough that the <em>sum of best
+offers adds up to less than $1</em>, you can buy one of each and hold a
+guaranteed $1 per basket. The gap between that sum and $1 is the profit.
+</p>
+
+<h3>What the bot does about it</h3>
+<ol>
+  <li><strong>Discovers</strong> the categorical events on Polymarket.</li>
+  <li><strong>Subscribes</strong> to their live order books over a WebSocket.</li>
+  <li><strong>Watches</strong> every book update and re-runs the math.</li>
+  <li><strong>Sizes</strong> the trade honestly — it walks the depth on each
+      leg, doesn't trust the top-of-book quote, and subtracts fees and the
+      Polygon gas cost amortised across the basket.</li>
+  <li><strong>Logs</strong> every qualifying opportunity to SQLite.</li>
+  <li><strong>In paper mode:</strong> simulates the fills with a realistic
+      latency penalty (250 ms by default, modelling "faster bots got there
+      first"), records what it would have paid, and marks realised PnL when
+      the event resolves.</li>
+  <li><strong>In live mode:</strong> submits FAK (fill-and-kill) orders on
+      every leg in parallel, unwinds anything that partial-fills, and defers
+      the on-chain redeem to a watcher you still have to build or run
+      manually.</li>
+  <li><strong>Respects hard caps</strong> on basket size, total open baskets,
+      daily loss, and a kill-switch file. It refuses to trade if any of those
+      trip.</li>
+  <li><strong>Shows you what it's doing</strong> on a dashboard that refreshes
+      itself every few seconds.</li>
+</ol>
+
+<h2>3. How to use it</h2>
+
+<h3>First-time setup (paper mode, no keys)</h3>
+<pre>cd C:\Users\matt\Dropbox\projects\arbitrage
+.venv\Scripts\activate
+pip install -e .
+copy .env.example .env          # defaults are fine for paper mode
+arb init                         # create the SQLite database</pre>
+
+<h3>Run it</h3>
+<p>
+Open three terminals (or use a background process per step). In paper mode
+nothing you do here touches real money.
+</p>
+
+<pre># Terminal 1 — keep the event list fresh
+arb discover --loop
+
+# Terminal 2 — start the scanner (WS + engine + paper executor)
+arb scan
+
+# Terminal 3 — dashboard
+arb web
+# open http://127.0.0.1:8000</pre>
+
+<p>
+Walk away for a few hours. Opportunities will log to the dashboard and into
+SQLite. Paper baskets will move from <em>pending_resolution</em> →
+<em>redeemed</em> (or <em>invalid</em>) as the underlying Polymarket events
+close out. At that point your paper realised-PnL column tells you whether
+the strategy would have been worth running.
+</p>
+
+<h3>Kill switch</h3>
+<p>
+Click the red <strong>kill</strong> button on the dashboard, or
+<code>touch KILL</code> in the project folder. The executor refuses to open
+any new baskets while that file exists.
+</p>
+
+<h3>Manually resolving an event (until the auto-watcher exists)</h3>
+<pre>arb resolve &lt;negRiskMarketID&gt; --winner &lt;winning_token_id&gt;
+arb resolve &lt;negRiskMarketID&gt; --winner invalid     # UMA voided it</pre>
+
+<h3>Going live (not recommended yet — see §4)</h3>
+<p>Edit <code>.env</code>:</p>
+<pre>ARB_MODE=live
+ARB_PRIVATE_KEY=0x...                  # dedicated wallet, small balance
+ARB_FUNDER_ADDRESS=0x...               # same as wallet for EOA
+ARB_MAX_BASKET_USD=25                  # keep it tiny for first real runs
+ARB_MAX_OPEN_BASKETS=1</pre>
+<p>
+Even after you do this, the live executor defaults to <code>dry_run=True</code>
+in code — meaning it still logs what it <em>would</em> have signed rather than
+broadcasting. To actually broadcast orders you have to change the
+<code>dry_run</code> flag in <code>arbitrage/cli.py</code>. This is an
+intentional safety belt.
+</p>
+
+<h2>4. Will it work in the real world?</h2>
+
+<p><strong>Honest answer: the code will run. Whether it will <em>make money</em>
+is an open empirical question — and the default expectation should be "no,
+not yet."</strong></p>
+
+<h3>Why that's the default answer</h3>
+<ul>
+  <li><strong>This arb is old news.</strong> NegRisk categorical mispricings
+      on Polymarket are well known to every market-making bot on the
+      platform. The big ones are usually closed out in milliseconds. What
+      remains is the long tail of briefly-stale quotes on thin markets near
+      event close.</li>
+  <li><strong>We are slow compared to the pros.</strong> Our scanner is a
+      Python process in the US on residential internet, reading a public
+      WebSocket. A serious HFT-style competitor runs closer to the CLOB and
+      uses pre-signed order batches. The 250&nbsp;ms paper-mode latency
+      penalty is meant to approximate being behind them, and it is probably
+      optimistic.</li>
+  <li><strong>Depth is shallow at the edge.</strong> When the math does
+      cross, there are usually only a few hundred dollars of lift available
+      before the sum climbs back above $1. Fee-wise the trade still works;
+      capital efficiency-wise it's unimpressive.</li>
+  <li><strong>Resolution risk is real.</strong> Polymarket events settle via
+      UMA's optimistic oracle. A disputed market can resolve differently
+      than you expected or even "invalid" with zero payout. The strategy is
+      not actually risk-free — it is risk-<em>small</em> most of the time
+      and occasionally very expensive. The denylist and proximity-to-close
+      skip exist for this reason.</li>
+  <li><strong>Gas is hardcoded.</strong> We assume $0.10 of Polygon gas per
+      basket. During a gas spike that assumption breaks, and the bot will
+      happily enter trades that are actually negative-EV after real gas.
+      Wiring a gas oracle is on the Phase&nbsp;3 list.</li>
+  <li><strong>We haven't proved the WebSocket works.</strong> The parser
+      matches Polymarket's documented format and the test suite exercises
+      it, but there is no substitute for a connection test against the real
+      server. That is the first thing to do when you flip it on.</li>
+</ul>
+
+<h3>What a realistic path forward looks like</h3>
+<ol>
+  <li><strong>Paper-mode burn-in, one week.</strong> Run it continuously,
+      watch the dashboard fill up, let events resolve. Total realised paper
+      PnL at the end of that week is your headline number. If it's net
+      negative after the latency penalty, don't even think about live mode.</li>
+  <li><strong>Investigate the misses.</strong> Every time the paper executor
+      writes a <em>failed</em> basket (because depth vanished during the
+      latency window) that's a trade a faster bot beat us to. Ratio of
+      <em>failed</em> to <em>redeemed</em> is a proxy for how competitive the
+      environment is.</li>
+  <li><strong>Tune or give up.</strong> If paper PnL is marginal, try a
+      tighter minimum edge, larger basket sizes, only near-close events, or
+      only low-volume events where the HFT bots don't bother. If it's still
+      marginal, this strategy on this venue may simply be claimed.</li>
+  <li><strong>Only then, flip live with a tiny cap.</strong> $25 basket, one
+      open at a time, one event. Expect slippage between paper and live PnL
+      of at least 20–50% because the simulator can't model every
+      micro-structural detail.</li>
+</ol>
+
+<h3>What would make me optimistic</h3>
+<p>
+Paper realised PnL of roughly <strong>+0.5% per basket, averaged across
+≥50 baskets</strong>, with failure rate under a third. Below that, there
+isn't enough margin to survive the gap between simulated and live execution.
+</p>
+
+<p>
+Above that, you still have to check that the opportunities it claims are
+scattered across many events (rather than concentrated in one lucky market
+that resolved favourably), and that the PnL is stable week-over-week rather
+than driven by one big win. Arbitrage should look boring and small on the
+balance curve — a straight line tilted gently up. If paper mode produces a
+hockey stick, something is wrong with the simulation and it will not
+replicate live.
+</p>
+
+<hr class="rule" />
+
+<p style="color: #57606a; font-size: 0.85rem;">
+Generated alongside commit for Phase 1 MVP, 60 passing tests, 71% total
+coverage (94% on the core math). Everything in this doc reflects the code
+as of this moment. If you change the strategy, the rebalancing of sections
+1 and 2 is on you — section 4 will always age faster than the others.
+</p>
+
+</body>
+</html>

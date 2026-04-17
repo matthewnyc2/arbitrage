@@ -1,0 +1,29 @@
+<h2>recent opportunities</h2>
+<table>
+  <thead>
+    <tr>
+      <th>detected</th>
+      <th>event</th>
+      <th class="num">Σ asks</th>
+      <th class="num">net bps</th>
+      <th class="num">max baskets</th>
+      <th class="num">expected $</th>
+      <th>acted</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.detected_at }}</td>
+      <td>{{ r.event_title }}</td>
+      <td class="num">{{ r.sum_vwap_asks }}</td>
+      <td class="num {% if r.net_edge_bps > 0 %}pos{% else %}neg{% endif %}">{{ r.net_edge_bps }}</td>
+      <td class="num">{{ r.max_baskets }}</td>
+      <td class="num">{{ r.expected_profit_usd }}</td>
+      <td>{% if r.acted_on %}<span class="badge redeemed">yes</span>{% else %}<span class="badge">no</span>{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" style="color:#8b949e;">no opportunities yet</td></tr>
+  {% endfor %}
+  </tbody>
+</table>

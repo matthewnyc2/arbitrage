@@ -1,0 +1,17 @@
+<h2>paper pnl</h2>
+<table>
+  <tr><th>realized pnl (usd)</th><td class="num {% if realized_pnl_usd.startswith('-') %}neg{% else %}pos{% endif %}">{{ realized_pnl_usd }}</td></tr>
+  <tr><th>redeemed</th><td class="num">{{ redeemed }}</td></tr>
+  <tr><th>pending resolution</th><td class="num">{{ pending }}</td></tr>
+  <tr><th>failed</th><td class="num">{{ failed }}</td></tr>
+  <tr><th>invalid</th><td class="num">{{ invalid }}</td></tr>
+</table>
+<p style="margin-top: 0.75rem;">
+  mode: <strong>{{ mode }}</strong>
+  {% if kill_active %}
+    &middot; <span class="badge failed">KILL SWITCH ACTIVE</span>
+    <button class="unkill" hx-post="/unkill" hx-target="#pnl" hx-swap="innerHTML">arm (remove kill)</button>
+  {% else %}
+    <button class="kill" hx-post="/kill" hx-target="#pnl" hx-swap="innerHTML">kill</button>
+  {% endif %}
+</p>
