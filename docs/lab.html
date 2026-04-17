@@ -67,13 +67,16 @@
           <span class="bankroll-lbl">Trade at prices from</span>
           <div class="bankroll-choices" id="window-choices">
             <button type="button" data-window="close">at close</button>
-            <button type="button" data-window="24h" class="active">24h before close</button>
-            <button type="button" data-window="7d">7 days before close</button>
+            <button type="button" data-window="1h">1h before</button>
+            <button type="button" data-window="6h">6h before</button>
+            <button type="button" data-window="24h" class="active">24h before</button>
+            <button type="button" data-window="3d">3 days before</button>
+            <button type="button" data-window="7d">7 days before</button>
           </div>
           <span class="bankroll-note" id="window-note">
-            Close prices are fully resolved. 24h-before-close reflects what a scanner
-            bot would have actually seen on the order book the day before resolution —
-            where tradable arbitrage actually lives.
+            These are <strong>real historical Polymarket prices</strong>, pulled from
+            their public CLOB price-history endpoint. For each event, we look up the
+            actual price of every outcome at the chosen moment before the market closed.
           </span>
         </div>
       </div>
@@ -141,28 +144,25 @@
       <div class="data-inner">
         <h2>What you're looking at, in plain English</h2>
         <p>
-          These 93 events are real Polymarket markets that have already
-          ended in the last four months. For each one we know who won and
-          what the prices were at the end. The page pretends you ran a
-          trading strategy on every single one of these, then tallies up
-          how much money you would have made or lost.
+          These events are real Polymarket markets that have already ended
+          in the last few weeks. For each one, we know who won and we have
+          the actual price of every outcome at every moment before the
+          market closed. The page runs a trading strategy on every event
+          and adds up how much money you would have made or lost.
         </p>
         <p>
           The <strong>"trade at prices from"</strong> selector above is the
-          important knob. Prices at the moment a market closes are almost
-          always correct (because by then everyone knows the answer). Prices
-          <strong>a day before the market closes</strong> are less tight —
-          people make more mistakes, and that's where real profit lives. Try
-          switching between the three options and watch the numbers change.
+          important knob. Prices right before a market closes tend to be
+          correct (because everyone already knows the answer). Prices a
+          day or more earlier are often noticeably off — and that's where
+          real arbitrage lives. Try clicking the different time windows
+          and watch the numbers change.
         </p>
         <p>
-          <strong>Fair warning:</strong> the &ldquo;24h before close&rdquo;
-          and &ldquo;7d before close&rdquo; prices are estimates — we work
-          them out from how much each outcome's price moved in that window.
-          A few trades with huge gaps are probably wrong (they come from
-          outcomes that didn't exist a week ago). But most of the data is
-          real enough to trust the pattern: <strong>the earlier you look,
-          the more genuine arbitrage you find.</strong>
+          <strong>Every price on this page is a real price Polymarket
+          recorded.</strong> Pulled from their public CLOB price-history
+          API. No estimates, no math tricks. You can verify every trade
+          by looking up the event on polymarket.com.
         </p>
       </div>
     </section>
@@ -206,6 +206,6 @@
   </p>
 </footer>
 
-<script src="assets/lab.js?v=6"></script>
+<script src="assets/lab.js?v=7"></script>
 </body>
 </html>

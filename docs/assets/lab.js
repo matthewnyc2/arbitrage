@@ -37,10 +37,6 @@ const STRATEGIES = [
     rule: "If the sum of every outcome's last trade price is below $1.00, buy one share of every outcome. Otherwise skip. Exactly one outcome will win and pay $1, so you profit the gap.",
     why: "This is the textbook risk-free trade. It's the one real arbitrage on prediction markets. The question is: does it ever actually trigger in practice, on resting prices, for a retail bot that isn't co-located next to the exchange? The historical data tells the truth.",
     run(ev, window) {
-      const prices = ev.outcomes.map(o => priceAt(o, window));
-      if (prices.some(p => p == null || p <= 0 || p >= 1)) {
-        return { action: "skip", cost: 0, payout: 0, sum: null, note: "Missing or degenerate prices — couldn't evaluate." };
-      }
       const sum = prices.reduce((a, b) => a + b, 0);
       if (sum >= 1.0) {
         return { action: "skip", cost: 0, payout: 0, sum, note: `Total cost $${sum.toFixed(3)}, above $1. No arbitrage — skipped.` };
@@ -58,7 +54,7 @@ const STRATEGIES = [
     run(ev, window) {
       let best = null, bestPrice = -1;
       for (const o of ev.outcomes) {
-        const p = priceAt(o, window);
+        const p = priceAt(o, ev, window);
         if (p == null) continue;
         if (p > bestPrice) { best = o; bestPrice = p; }
       }
@@ -81,7 +77,7 @@ const STRATEGIES = [
     run(ev, window) {
       let best = null, bestPrice = Infinity;
       for (const o of ev.outcomes) {
-        const p = priceAt(o, window);
+        const p = priceAt(o, ev, window);
         if (p == null || p <= 0) continue;
         if (p < bestPrice) { best = o; bestPrice = p; }
       }
@@ -102,7 +98,11 @@ const STRATEGIES = [
     rule: "For each event, buy one share of every outcome. You pay the sum of prices. You receive $1 (exactly one wins).",
     why: "Basket Arbitrage without the safety condition. Every event is a tiny guaranteed loss equal to the &ldquo;vig&rdquo; — the amount by which Polymarket's prices overshoot $1. A baseline for what the market's rounding costs.",
     run(ev, window) {
-      const prices = ev.outcomes.map(o => priceAt(o, window));
+      const prices = ev.outcomes.map(o => priceAt(o, ev, window));
+      // If any outcome lacks price data at this window, skip (we can't evaluate)
+      if (prices.some(p => p == null)) {
+        return { action: "skip", cost: 0, payout: 0, sum: null, note: "No price data at this window for at least one outcome." };
+      }
       if (prices.some(p => p == null || p <= 0)) {
         return { action: "skip", cost: 0, payout: 0, note: "Missing prices." };
       }
@@ -118,7 +118,7 @@ const STRATEGIES = [
     rule: "For each event with 3+ outcomes, buy one share of the three highest-priced outcomes at the chosen window. Pay the sum. Win $1 if any of those three wins.",
     why: "A hedged bet — buying most of the probability mass but skipping the tail. If the hit rate is high enough, it pays.",
     run(ev, window) {
-      const priced = ev.outcomes.map(o => ({ o, p: priceAt(o, window) })).filter(x => x.p != null && x.p > 0);
+      const priced = ev.outcomes.map(o => ({ o, p: priceAt(o, ev, window) })).filter(x => x.p != null && x.p > 0);
       if (priced.length < 3) return { action: "skip", cost: 0, payout: 0, note: "Fewer than 3 priced outcomes." };
       const top = [...priced].sort((a, b) => b.p - a.p).slice(0, 3);
       const cost = top.reduce((s, x) => s + x.p, 0);
@@ -174,24 +174,45 @@ function runBacktest(strategy, events, window) {
 
 const state = {
   events: [],
-  results: {},            // key -> backtest result (for current window)
+  results: {},
   activeKey: "basket-arb",
   tradeFilter: "all",
   bankroll: 1000,
-  priceWindow: "24h",     // "close" | "24h" | "7d"
+  priceWindow: "24h",    // key from WINDOWS below
+};
+
+// Time windows: how many seconds before close to read the price.
+const WINDOWS = {
+  "close": { label: "at close",      seconds: 0 },
+  "1h":    { label: "1h before close", seconds: 3600 },
+  "6h":    { label: "6h before close", seconds: 6*3600 },
+  "24h":   { label: "24h before close", seconds: 24*3600 },
+  "3d":    { label: "3 days before close", seconds: 3*24*3600 },
+  "7d":    { label: "7 days before close", seconds: 7*24*3600 },
 };
 
 /**
- * Extract the price a bot would have seen at a given window before close.
- * Uses Gamma's oneDayPriceChange / oneWeekPriceChange to back-compute.
+ * Return the actual price a trader would have seen on Polymarket at a specific
+ * time. Uses real historical price data pulled from Polymarket's public CLOB
+ * price-history endpoint — not estimates.
  */
-function priceAt(outcome, window) {
-  const last = outcome.last_trade_price;
-  if (last == null) return null;
-  if (window === "close") return last;
-  const delta = window === "24h" ? (outcome.one_day_change  || 0)
-                                 : (outcome.one_week_change || 0);
-  return Math.max(0, Math.min(1, last - delta));
+function priceAt(outcome, ev, windowKey) {
+  const hist = outcome.history;
+  if (!hist || !hist.length) return null;
+  const w = WINDOWS[windowKey] || WINDOWS["close"];
+  const closeTs = ev._closeTs;       // precomputed
+  if (closeTs == null) return null;
+  const targetTs = closeTs - w.seconds;
+  // If the target is before any recorded data, no price
+  if (hist[0].t > targetTs) return null;
+  // Binary search for the last point with t <= targetTs
+  let lo = 0, hi = hist.length - 1;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (hist[mid].t <= targetTs) lo = mid;
+    else hi = mid - 1;
+  }
+  return hist[lo].p;
 }
 
 // ==========================  DOM  =========================================
@@ -247,10 +268,18 @@ async function boot() {
   state.events = Array.isArray(payload?.events) ? payload.events : [];
   if (!state.events.length) throw new Error("No events found in dataset");
 
-  // Figure out the date span covered by the 93 events so we can annualize PnL.
+  // Precompute the close timestamp (seconds since epoch) for each event, so
+  // priceAt() can do a cheap binary search per lookup.
+  for (const ev of state.events) {
+    const raw = ev.closed_time || ev.end_date || "";
+    const iso = String(raw).replace(" +00", "+00:00").replace("Z", "+00:00");
+    const d = new Date(iso);
+    ev._closeTs = isNaN(d.getTime()) ? null : Math.floor(d.getTime() / 1000);
+  }
+
   const ends = state.events
-    .map(e => new Date((e.closed_time || e.end_date || "").replace(" +00", "+00:00")))
-    .filter(d => !isNaN(d.getTime()))
+    .map(e => e._closeTs ? new Date(e._closeTs * 1000) : null)
+    .filter(d => d != null)
     .sort((a, b) => a - b);
   state.spanFirst = ends[0];
   state.spanLast  = ends[ends.length - 1];
