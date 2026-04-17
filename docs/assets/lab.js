@@ -177,7 +177,6 @@ const state = {
   results: {},            // key -> backtest result
   activeKey: "basket-arb",
   tradeFilter: "all",
-  tradeDisplayLimit: 30,
 };
 
 // ==========================  DOM  =========================================
@@ -255,11 +254,14 @@ function wireInteractions() {
   document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       state.tradeFilter = btn.dataset.filter;
-      state.tradeDisplayLimit = 30;
       document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
       renderTradeList();
     });
   });
+
+  // CSV download
+  const dl = document.getElementById("csv-download");
+  if (dl) dl.addEventListener("click", (e) => { e.preventDefault(); downloadCsv(); });
 
   // Modal close
   el.modal.addEventListener("click", (e) => {
@@ -364,27 +366,53 @@ function renderTradeList() {
   });
 
   el.tradeList.innerHTML = "";
-  const limit = state.tradeDisplayLimit;
-  for (const r of filtered.slice(0, limit)) {
-    el.tradeList.appendChild(renderTradeRow(r));
-  }
-  if (filtered.length > limit) {
-    const more = document.createElement("div");
-    more.className = "trade-show-more";
-    more.textContent = `Show ${Math.min(30, filtered.length - limit)} more (${filtered.length - limit} remaining)`;
-    more.addEventListener("click", () => {
-      state.tradeDisplayLimit += 30;
-      renderTradeList();
-    });
-    el.tradeList.appendChild(more);
-  }
   if (!filtered.length) {
     const empty = document.createElement("div");
     empty.className = "trade-show-more";
     empty.style.cursor = "default";
     empty.textContent = "No trades match this filter.";
     el.tradeList.appendChild(empty);
+    return;
   }
+  // Show every row. If you claim N trades, you show N trades.
+  for (const r of filtered) {
+    el.tradeList.appendChild(renderTradeRow(r));
+  }
+  const footer = document.createElement("div");
+  footer.className = "trade-count-footer";
+  footer.innerHTML = `Showing all <strong>${filtered.length}</strong> ${filtered.length === 1 ? "row" : "rows"} · <a href="#" id="csv-download">download as CSV</a>`;
+  el.tradeList.appendChild(footer);
+  const dl = document.getElementById("csv-download");
+  if (dl) dl.addEventListener("click", (e) => { e.preventDefault(); downloadCsv(); });
+}
+
+function downloadCsv() {
+  const strategy = STRATEGIES.find(s => s.key === state.activeKey);
+  const result = state.results[strategy.key];
+  const rows = [["event_title", "neg_risk", "num_outcomes", "action", "cost", "payout", "pnl", "note"]];
+  for (const r of result.rows) {
+    rows.push([
+      r.event.title,
+      String(r.event.neg_risk),
+      String(r.event.num_outcomes),
+      r.result.action,
+      (r.result.cost || 0).toFixed(4),
+      (r.result.payout || 0).toFixed(4),
+      r.pnl.toFixed(4),
+      (r.result.note || "").replace(/[\r\n]+/g, " "),
+    ]);
+  }
+  const csv = rows.map(row => row.map(v => {
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `polymarket-backtest-${strategy.key}.csv`;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 0);
 }
 
 function renderTradeRow(r) {
@@ -506,7 +534,6 @@ function openStrategyModal(s) {
   document.getElementById("use-strategy").addEventListener("click", () => {
     state.activeKey = s.key;
     state.tradeFilter = "all";
-    state.tradeDisplayLimit = 30;
     document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b.dataset.filter === "all"));
     renderActiveStrategy();
     renderStrategyGrid();

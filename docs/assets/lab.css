@@ -183,6 +183,14 @@
 }
 .trade-show-more:hover { border-color: var(--accent); color: var(--accent); }
 
+.trade-count-footer {
+  text-align: center; padding: 1rem; margin-top: 0.4rem;
+  font-size: 0.85rem; color: var(--text-3);
+}
+.trade-count-footer strong { color: var(--text); font-family: var(--mono); }
+.trade-count-footer a { color: var(--accent); text-decoration: underline; }
+.trade-count-footer a:hover { color: var(--accent-dark); }
+
 .data-section { padding: 2rem 1.5rem; background: var(--surface); }
 .data-inner { max-width: 840px; margin: 0 auto; }
 .data-inner h2 { font-size: 1.05rem; font-weight: 600; margin: 0 0 0.5rem; }
