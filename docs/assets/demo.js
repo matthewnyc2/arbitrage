@@ -1,55 +1,57 @@
 /*
- * Live browser-side port of the Python arbitrage engine.
+ * Live Polymarket arbitrage scanner — portfolio demo.
  *
- * What it does:
- *   1. Fetches a handful of active negRisk categorical events from Polymarket's
- *      public Gamma REST API (via a CORS proxy since Gamma doesn't send CORS
- *      headers; the WebSocket path below has no such restriction).
- *   2. Opens a WebSocket to the public CLOB market channel.
- *   3. Subscribes to every outcome token of those events.
- *   4. Maintains per-token L2 order book state (book snapshots + price_change deltas).
- *   5. On every update, recomputes Σ best-ask for the affected event; when it
- *      crosses below $1 net of an estimated fee+gas spread, fires an opportunity.
+ * What this does, in plain English:
+ *   - Loads a list of 6–8 currently-active categorical Polymarket events
+ *     from a static JSON file that a GitHub Action refreshes every hour.
+ *   - Opens a WebSocket to Polymarket's public CLOB and subscribes to every
+ *     outcome token of those events.
+ *   - Maintains order book state per outcome and recomputes "basket cost" —
+ *     the total cost of buying one share of every answer — on every update.
+ *   - If that basket cost drops below $1.00, it's a risk-free arbitrage and
+ *     the page flashes green.
  *
- * This runs entirely in the browser. No backend, no keys, no state leaves the tab.
+ * This is a browser-only port of the Python engine in the repo. No backend,
+ * no keys, no orders submitted.
  */
 
-// --- config ---------------------------------------------------------------
-
-// Event list is published by a GitHub Action on schedule (see
-// .github/workflows/refresh-events.yml). Loading it from the same origin
-// sidesteps CORS on Polymarket's REST API. The WebSocket below streams live
-// book data directly — it has no CORS restriction.
 const EVENTS_URL = "./data/events.json";
 const WS_URL     = "wss://ws-subscriptions-clob.polymarket.com/ws/market";
 const MAX_EVENTS_TO_WATCH = 6;
 const PING_INTERVAL_MS    = 10_000;
-const FEE_BPS             = 0;
-const EST_GAS_USD         = 0.10;
-const EST_BASKET_SIZE     = 100;
-const MIN_NET_EDGE_BPS    = 25;     // flash an opp when net edge >= 25 bps
-const NEAR_ARB_THRESHOLD  = 0.01;   // show warn band when cost is within 1% of $1
+const NEAR_ARB_THRESHOLD  = 0.01;     // $0.01 above $1 counts as "near miss"
 
-// --- DOM ------------------------------------------------------------------
+// --- DOM shortcuts ---------------------------------------------------------
 
 const $ = (sel) => document.querySelector(sel);
-const connDot      = $("#conn-dot");
-const connLabel    = $("#conn-label");
-const picker       = $("#event-picker");
-const eventTitle   = $("#event-title");
-const eventSub     = $("#event-subtitle");
-const basketCost   = $("#basket-cost");
-const basketDelta  = $("#basket-delta");
-const basketStatus = $("#basket-status");
-const basketFill   = $("#basket-fill");
-const outcomeList  = $("#outcome-list");
-const sideEvents   = $("#stat-events");
-const sideTokens   = $("#stat-tokens");
-const sideBooks    = $("#stat-books");
-const sideMsgs     = $("#stat-msgs");
-const sideUptime   = $("#stat-uptime");
-const oppsStream   = $("#opps-stream");
-const oppsEmpty    = $("#opps-empty");
+
+const el = {
+  connDot:      $("#conn-dot"),
+  connLabel:    $("#conn-label"),
+  aLine:        $("#a-line"),
+  aSub:         $("#a-sub"),
+  watchCount:   $("#watch-count"),
+  eventList:    $("#event-list"),
+  eventTitle:   $("#event-title"),
+  eventSub:     $("#event-subtitle"),
+  whyBtn:       $("#why-this-event"),
+  basketCost:   $("#basket-cost"),
+  basketCostSub:$("#basket-cost-sub"),
+  basketPnl:    $("#basket-pnl"),
+  basketPnlSub: $("#basket-pnl-sub"),
+  basketStatus: $("#basket-status"),
+  basketFill:   $("#basket-fill"),
+  scaleButtons: $("#scale-buttons"),
+  scaleOut:     $("#scale-out"),
+  outcomeList:  $("#outcome-list"),
+  statEvents:   $("#stat-events"),
+  statTokens:   $("#stat-tokens"),
+  statBooks:    $("#stat-books"),
+  statMsgs:     $("#stat-msgs"),
+  statUptime:   $("#stat-uptime"),
+  modal:        $("#modal"),
+  modalContent: $("#modal-content"),
+};
 
 // --- state ----------------------------------------------------------------
 
@@ -59,30 +61,19 @@ const state = {
   tokenToEvent: {},
   selectedEventId: null,
   msgCount: 0,
-  oppCount: 0,
   startTime: Date.now(),
   ws: null,
   pingTimer: null,
-  lastOppIdByEvent: {},
+  scale: 1,
 };
 
-// Minimal sorted map for a price ladder.
 class Ladder {
   constructor() { this.m = {}; this.sortedKeys = null; }
-  set(price, size) {
-    if (size <= 0) this.del(price);
-    else { this.m[price] = size; this.sortedKeys = null; }
-  }
+  set(price, size) { if (size <= 0) this.del(price); else { this.m[price] = size; this.sortedKeys = null; } }
   del(price) { delete this.m[price]; this.sortedKeys = null; }
   clear()    { this.m = {}; this.sortedKeys = null; }
   size()     { return Object.keys(this.m).length; }
-  keys() {
-    if (this.sortedKeys === null) {
-      this.sortedKeys = Object.keys(this.m)
-        .map(parseFloat).sort((a, b) => a - b);
-    }
-    return this.sortedKeys;
-  }
+  keys()     { if (this.sortedKeys === null) this.sortedKeys = Object.keys(this.m).map(parseFloat).sort((a,b)=>a-b); return this.sortedKeys; }
   best(ascending) {
     const ks = this.keys();
     if (!ks.length) return null;
@@ -91,18 +82,20 @@ class Ladder {
   }
 }
 
-// --- bootstrap -------------------------------------------------------------
+// --- bootstrap ------------------------------------------------------------
 
 bootstrap().catch((err) => {
   console.error("bootstrap failed", err);
   setConn("bad", "unable to load events — " + err.message);
+  el.aLine.innerHTML = `<span class="verdict no">Couldn't load.</span>`;
+  el.aSub.textContent = "Refresh the page in a minute — the events list refreshes hourly.";
 });
 
 async function bootstrap() {
-  setConn("pend", "loading active Polymarket events…");
+  setConn("pend", "loading active events…");
   const events = await fetchActiveNegRiskEvents();
   if (!events.length) {
-    setConn("bad", "no active negRisk events found — Polymarket may be quiet");
+    setConn("bad", "no active events found");
     return;
   }
   for (const e of events) {
@@ -110,15 +103,17 @@ async function bootstrap() {
     for (const o of e.outcomes) state.tokenToEvent[o.token_id] = e.id;
   }
   state.selectedEventId = events[0].id;
-  sideEvents.textContent = Object.keys(state.events).length;
-  sideTokens.textContent = Object.keys(state.tokenToEvent).length;
-  renderEventPicker();
+  el.watchCount.textContent = events.length;
+  el.statEvents.textContent = events.length;
+  el.statTokens.textContent = Object.keys(state.tokenToEvent).length;
+  renderEventList();
   renderSelectedEvent();
+  wireInteractions();
   startUptimeTicker();
   connectWS();
 }
 
-// --- REST fetch with proxy fallback ---------------------------------------
+// --- REST (same-origin events.json — GitHub Action refreshes hourly) ------
 
 async function fetchActiveNegRiskEvents() {
   const resp = await fetch(EVENTS_URL + "?t=" + Date.now());
@@ -145,23 +140,17 @@ async function fetchActiveNegRiskEvents() {
 
 function connectWS() {
   const tokenIds = Object.keys(state.tokenToEvent);
-  if (!tokenIds.length) { setConn("bad", "no tokens to subscribe"); return; }
-  setConn("pend", "opening WebSocket to CLOB…");
+  if (!tokenIds.length) { setConn("bad", "no tokens"); return; }
+  setConn("pend", "opening connection to Polymarket…");
 
   const ws = new WebSocket(WS_URL);
   state.ws = ws;
 
   ws.addEventListener("open", () => {
-    setConn("on", `subscribed to ${tokenIds.length} tokens across ${Object.keys(state.events).length} events`);
-    ws.send(JSON.stringify({
-      type: "market",
-      assets_ids: tokenIds,
-      custom_feature_enabled: true,
-    }));
+    setConn("on", `live · reading order books for ${Object.keys(state.events).length} events`);
+    ws.send(JSON.stringify({ type: "market", assets_ids: tokenIds, custom_feature_enabled: true }));
     if (state.pingTimer) clearInterval(state.pingTimer);
-    state.pingTimer = setInterval(() => {
-      try { ws.send("PING"); } catch { /* noop */ }
-    }, PING_INTERVAL_MS);
+    state.pingTimer = setInterval(() => { try { ws.send("PING"); } catch {} }, PING_INTERVAL_MS);
   });
 
   ws.addEventListener("message", (ev) => {
@@ -169,30 +158,27 @@ function connectWS() {
     if (typeof raw === "string") {
       const t = raw.trim();
       if (t === "PONG" || t === "PING") return;
-      try { handlePayload(JSON.parse(t)); } catch { /* noop */ }
+      try { handlePayload(JSON.parse(t)); } catch {}
     }
   });
 
   ws.addEventListener("close", () => {
-    setConn("bad", "WebSocket closed — reconnecting…");
+    setConn("bad", "connection dropped — reconnecting…");
     if (state.pingTimer) clearInterval(state.pingTimer);
     setTimeout(connectWS, 3000);
   });
 
-  ws.addEventListener("error", () => setConn("bad", "WebSocket error"));
+  ws.addEventListener("error", () => setConn("bad", "connection error"));
 }
 
 function handlePayload(payload) {
-  if (Array.isArray(payload)) {
-    for (const m of payload) dispatch(m);
-  } else if (payload && typeof payload === "object") {
-    dispatch(payload);
-  }
+  if (Array.isArray(payload)) for (const m of payload) dispatch(m);
+  else if (payload && typeof payload === "object") dispatch(payload);
 }
 
 function dispatch(msg) {
   state.msgCount++;
-  sideMsgs.textContent = state.msgCount.toLocaleString();
+  el.statMsgs.textContent = state.msgCount.toLocaleString();
   const t = msg.event_type;
   if (t === "book")          applyBookSnapshot(msg);
   else if (t === "price_change") applyPriceChange(msg);
@@ -202,19 +188,14 @@ function applyBookSnapshot(msg) {
   const assetId = msg.asset_id;
   if (!assetId || !state.tokenToEvent[assetId]) return;
   const book = getBook(assetId);
-  book.bids.clear();
-  book.asks.clear();
-  if (Array.isArray(msg.bids)) {
-    for (const lvl of msg.bids) {
-      const p = parseFloat(lvl.price), s = parseFloat(lvl.size);
-      if (p > 0 && s > 0) book.bids.set(p, s);
-    }
+  book.bids.clear(); book.asks.clear();
+  for (const lvl of (msg.bids || [])) {
+    const p = parseFloat(lvl.price), s = parseFloat(lvl.size);
+    if (p > 0 && s > 0) book.bids.set(p, s);
   }
-  if (Array.isArray(msg.asks)) {
-    for (const lvl of msg.asks) {
-      const p = parseFloat(lvl.price), s = parseFloat(lvl.size);
-      if (p > 0 && s > 0) book.asks.set(p, s);
-    }
+  for (const lvl of (msg.asks || [])) {
+    const p = parseFloat(lvl.price), s = parseFloat(lvl.size);
+    if (p > 0 && s > 0) book.asks.set(p, s);
   }
   onBookUpdate(assetId);
 }
@@ -240,7 +221,7 @@ function applyPriceChange(msg) {
 function getBook(tokenId) {
   if (!state.books[tokenId]) {
     state.books[tokenId] = { bids: new Ladder(), asks: new Ladder() };
-    sideBooks.textContent = Object.keys(state.books).length.toLocaleString();
+    el.statBooks.textContent = Object.keys(state.books).length.toLocaleString();
   }
   return state.books[tokenId];
 }
@@ -251,8 +232,9 @@ function onBookUpdate(tokenId) {
   const eventId = state.tokenToEvent[tokenId];
   if (!eventId) return;
   evaluateEvent(eventId);
+  renderEventList();
   if (eventId === state.selectedEventId) renderSelectedEvent();
-  renderEventPicker(); // pill label updates live
+  renderHeroAnswer();
 }
 
 function evaluateEvent(eventId) {
@@ -265,72 +247,75 @@ function evaluateEvent(eventId) {
     if (!best) { missing += 1; continue; }
     sum += best.price;
   }
-  if (missing > 0) { ev.sum = null; return; }
-  ev.sum = sum;
+  ev.sum = missing > 0 ? null : sum;
   ev.lastUpdate = Date.now();
-
-  const grossPerBasket = 1 - sum;
-  const gasAmortized   = EST_GAS_USD / EST_BASKET_SIZE;
-  const feeCost        = (FEE_BPS / 10_000) * sum;
-  const netPerBasket   = grossPerBasket - feeCost - gasAmortized;
-  const netBps         = Math.round(netPerBasket * 10_000);
-
-  if (netBps >= MIN_NET_EDGE_BPS) pushOpportunity(ev, sum, netBps);
-}
-
-function pushOpportunity(ev, sum, netBps) {
-  const prev = state.lastOppIdByEvent[ev.id];
-  if (prev && (Date.now() - prev.at < 2500) && Math.abs(prev.bps - netBps) < 5) return;
-  state.lastOppIdByEvent[ev.id] = { at: Date.now(), bps: netBps };
-  state.oppCount += 1;
-  oppsEmpty.style.display = "none";
-
-  const div = document.createElement("div");
-  div.className = "opp-alert";
-  div.innerHTML = `
-    <div class="when">${new Date().toLocaleTimeString()}</div>
-    <div class="title">${escapeHtml(ev.title)}</div>
-    <div class="detail">basket $${sum.toFixed(4)} · edge ${netBps >= 0 ? "+" : ""}${netBps} bps</div>
-  `;
-  oppsStream.prepend(div);
-  while (oppsStream.childNodes.length > 12) oppsStream.removeChild(oppsStream.lastChild);
 }
 
 // --- rendering ------------------------------------------------------------
 
 function setConn(cls, text) {
-  connDot.className = "dot " + cls;
-  connLabel.textContent = text;
+  el.connDot.className = "dot " + cls;
+  el.connLabel.textContent = text;
 }
 
-function renderEventPicker() {
-  picker.innerHTML = "";
+function renderHeroAnswer() {
+  // Find the cheapest basket across all events
+  let bestEv = null, bestSum = Infinity;
   for (const id of Object.keys(state.events)) {
     const ev = state.events[id];
-    const pill = document.createElement("button");
+    if (ev.sum === null || ev.sum === undefined) continue;
+    if (ev.sum < bestSum) { bestSum = ev.sum; bestEv = ev; }
+  }
+  if (!bestEv) {
+    el.aLine.innerHTML = `<span class="spinner"></span><span class="muted">checking live prices…</span>`;
+    return;
+  }
+  const cls = classForSum(bestSum);
+  const gap = bestSum - 1;
+  if (cls === "arb") {
+    const bps = Math.round(-gap * 10_000);
+    el.aLine.innerHTML = `<span class="verdict yes">Yes!</span> <span class="detail">The cheapest bundle is</span> <span class="cost-chip yes">$${bestSum.toFixed(4)}</span><span class="detail">— free ${Math.abs(bps)} bps (${(-gap*100).toFixed(2)}¢) per $1 bet</span>`;
+    el.aSub.innerHTML = `On <strong>${escapeHtml(bestEv.title)}</strong>. Click it on the left to see the details.`;
+  } else if (cls === "near") {
+    el.aLine.innerHTML = `<span class="verdict near">Almost.</span> <span class="detail">The cheapest bundle is</span> <span class="cost-chip near">$${bestSum.toFixed(4)}</span><span class="detail">— you'd lose ${(gap*100).toFixed(2)}¢ per $1 bet</span>`;
+    el.aSub.innerHTML = `On <strong>${escapeHtml(bestEv.title)}</strong>. Watch it — if another trader sells off this might flip into arbitrage.`;
+  } else {
+    el.aLine.innerHTML = `<span class="verdict no">Not right now.</span> <span class="detail">The cheapest bundle is</span> <span class="cost-chip no">$${bestSum.toFixed(4)}</span><span class="detail">— you'd lose ${(gap*100).toFixed(2)}¢ per $1 bet</span>`;
+    el.aSub.innerHTML = `Watching <strong>${Object.keys(state.events).length} events</strong>. This is the normal state — arbitrage windows are rare.`;
+  }
+}
+
+function renderEventList() {
+  el.eventList.innerHTML = "";
+  for (const id of Object.keys(state.events)) {
+    const ev = state.events[id];
     const cls = classForSum(ev.sum);
-    pill.className = "event-pill" + (id === state.selectedEventId ? " active" : "")
-                    + (cls === "arb" ? " has-arb" : cls === "near" ? " near-arb" : "");
-    pill.innerHTML = `
-      <span>${escapeHtml(truncate(ev.title, 36))}</span>
-      <span class="pill-cost">${ev.sum === null ? "—" : "$" + ev.sum.toFixed(3)}</span>
+    const costText = ev.sum === null ? "waiting" : "$" + ev.sum.toFixed(3);
+    const costCls = ev.sum === null ? "" : cls === "arb" ? "yes" : cls === "near" ? "near" : "no";
+    const card = document.createElement("div");
+    card.className = "event-card" + (id === state.selectedEventId ? " active" : "");
+    card.innerHTML = `
+      <div class="ec-title">${escapeHtml(ev.title)}</div>
+      <div class="ec-meta">
+        <span class="ec-count">${ev.outcomes.length} possible answers</span>
+        <span class="ec-cost ${costCls}">${costText}</span>
+      </div>
     `;
-    pill.addEventListener("click", () => {
+    card.addEventListener("click", () => {
       state.selectedEventId = id;
-      renderEventPicker();
+      renderEventList();
       renderSelectedEvent();
     });
-    picker.appendChild(pill);
+    el.eventList.appendChild(card);
   }
 }
 
 function renderSelectedEvent() {
   const ev = state.events[state.selectedEventId];
   if (!ev) return;
-  eventTitle.textContent = ev.title;
-  eventSub.textContent = `${ev.outcomes.length} outcomes · one will win, all others pay $0`;
+  el.eventTitle.textContent = ev.title;
+  el.eventSub.textContent = `${ev.outcomes.length} possible answers · exactly one will win and pay $1`;
 
-  // Collect best-asks
   let sum = 0, complete = true;
   const rows = [];
   for (const o of ev.outcomes) {
@@ -339,73 +324,91 @@ function renderSelectedEvent() {
     if (!best) { complete = false; rows.push({ ...o, price: null, size: null }); }
     else { sum += best.price; rows.push({ ...o, price: best.price, size: best.size }); }
   }
-  // Sort outcomes by price descending (most likely outcome first)
   rows.sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
 
-  renderBasketMeter(complete ? sum : null);
+  renderCalcCard(complete ? sum : null);
   renderOutcomeList(rows, complete ? sum : null);
 }
 
-function renderBasketMeter(sum) {
+function renderCalcCard(sum) {
   if (sum === null) {
-    basketCost.textContent = "—";
-    basketCost.className = "big-val";
-    basketDelta.textContent = "waiting for every outcome's book…";
-    basketDelta.className = "delta fair";
-    basketStatus.textContent = "loading";
-    basketStatus.className = "status fair";
-    basketFill.style.width = "0%";
-    basketFill.className = "fill";
+    el.basketCost.textContent = "—";
+    el.basketCost.className = "cell-val";
+    el.basketCostSub.textContent = "waiting for every answer's order book…";
+    el.basketPnl.textContent = "—";
+    el.basketPnl.className = "cell-val";
+    el.basketPnlSub.textContent = "per one-set bet";
+    el.basketStatus.textContent = "loading";
+    el.basketStatus.className = "status fair";
+    el.basketFill.style.width = "0%";
+    el.basketFill.className = "fill";
+    el.scaleOut.innerHTML = "";
     return;
   }
-  const delta = sum - 1;
   const cls = classForSum(sum);
+  const delta = sum - 1;
 
-  basketCost.textContent = "$" + sum.toFixed(4);
-  basketCost.className = "big-val" + (cls === "arb" ? " arb" : cls === "near" ? " near" : "");
+  // scale
+  const q = state.scale;
+  const totalCost = sum * q;
+  const totalGet  = 1 * q;
+  const pnl       = totalGet - totalCost;
 
-  const sign = delta >= 0 ? "+" : "";
-  const bps = Math.round(delta * 10_000);
-  basketDelta.textContent = (cls === "arb"
-    ? `${sign}$${delta.toFixed(4)} below $1 · arbitrage of ${Math.abs(bps)} bps`
-    : cls === "near"
-    ? `${sign}$${delta.toFixed(4)} above $1 · no arbitrage yet (${bps} bps over)`
-    : `${sign}$${delta.toFixed(4)} above $1 · fair pricing, no arbitrage`);
-  basketDelta.className = "delta " + cls;
+  el.basketCost.textContent = "$" + sum.toFixed(4);
+  el.basketCost.className = "cell-val";
+  el.basketCostSub.textContent = q === 1 ? "for one full set" : `× ${q} sets = $${totalCost.toFixed(2)} total`;
 
-  basketStatus.textContent = cls === "arb" ? "ARBITRAGE" : cls === "near" ? "NEAR MISS" : "FAIR";
-  basketStatus.className = "status " + cls;
+  el.basketPnl.textContent = (pnl >= 0 ? "+" : "") + "$" + pnl.toFixed(q >= 100 ? 2 : 4);
+  el.basketPnl.className = "cell-val " + (cls === "arb" ? "pos" : cls === "near" ? "near" : "neg");
+  el.basketPnlSub.textContent = q === 1
+    ? (cls === "arb" ? "guaranteed — buy + redeem" : cls === "near" ? "you'd lose a tiny bit" : "you'd lose this no matter what")
+    : `on a ${q}-set bet`;
 
-  // Map cost $0.80 → 0%, $1.00 → 50%, $1.20 → 100%
+  el.basketStatus.textContent = cls === "arb" ? "ARBITRAGE" : cls === "near" ? "NEAR MISS" : "NO ARB";
+  el.basketStatus.className = "status " + cls;
+
+  // interpretation line
+  if (cls === "arb") {
+    el.scaleOut.innerHTML = `
+      Pay <strong>$${totalCost.toFixed(2)}</strong>,
+      receive <strong>$${totalGet.toFixed(2)}</strong> when the event resolves,
+      pocket <span class="gain">+$${pnl.toFixed(2)}</span> risk-free.
+      Every leg fills and the winning outcome pays $1.
+    `;
+  } else {
+    const perSet = delta;
+    el.scaleOut.innerHTML = `
+      Pay <strong>$${totalCost.toFixed(2)}</strong>,
+      receive <strong>$${totalGet.toFixed(2)}</strong> when the event resolves,
+      net <span class="loss">−$${Math.abs(pnl).toFixed(2)}</span>.
+      That's ${(perSet*100).toFixed(2)}¢ too expensive per set — no arbitrage.
+    `;
+  }
+
   const pct = Math.max(0, Math.min(100, ((sum - 0.80) / 0.40) * 100));
-  basketFill.style.width = pct.toFixed(1) + "%";
-  basketFill.className = "fill" + (cls === "arb" ? " arb" : cls === "near" ? " near" : "");
+  el.basketFill.style.width = pct.toFixed(1) + "%";
+  el.basketFill.className = "fill" + (cls === "arb" ? " arb" : cls === "near" ? " near" : "");
 }
 
 function renderOutcomeList(rows, totalSum) {
-  outcomeList.innerHTML = "";
+  el.outcomeList.innerHTML = "";
   for (const r of rows) {
-    const row = document.createElement("div");
     const hasPrice = r.price !== null;
     const pct = hasPrice ? (r.price * 100) : 0;
-    row.className = "outcome-row" + (!hasPrice ? " empty" : "")
-                  + (hasPrice && totalSum !== null && totalSum < 1 && classForSum(totalSum) === "arb" ? " highlighted" : "");
-    const name = escapeHtml(r.name);
-    const pctText = hasPrice ? pct.toFixed(1) + "%" : "waiting";
-    const priceSize = hasPrice
-      ? `$${r.price.toFixed(4)} · ${formatSize(r.size)} shares`
-      : "no asks yet";
+    const highlighted = hasPrice && totalSum !== null && classForSum(totalSum) === "arb";
+    const row = document.createElement("div");
+    row.className = "outcome-row" + (!hasPrice ? " empty" : "") + (highlighted ? " highlighted" : "");
     row.innerHTML = `
       <div class="left">
-        <div class="outcome-name">${name}</div>
+        <div class="outcome-name">${escapeHtml(r.name)}</div>
         <div class="prob-bar"><div class="prob-fill" style="width: ${Math.min(100, pct).toFixed(1)}%"></div></div>
       </div>
       <div class="right">
-        <div class="pct">${pctText}</div>
-        <div class="price-size">${priceSize}</div>
+        <div class="pct">${hasPrice ? pct.toFixed(1) + "%" : "waiting"}</div>
+        <div class="price-size">${hasPrice ? `$${r.price.toFixed(4)} · ${formatSize(r.size)} available` : "no offers yet"}</div>
       </div>
     `;
-    outcomeList.appendChild(row);
+    el.outcomeList.appendChild(row);
   }
 }
 
@@ -416,12 +419,55 @@ function classForSum(sum) {
   return "fair";
 }
 
+// --- interactions ---------------------------------------------------------
+
+function wireInteractions() {
+  // scale buttons
+  el.scaleButtons.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-qty]");
+    if (!btn) return;
+    state.scale = parseInt(btn.dataset.qty, 10) || 1;
+    for (const b of el.scaleButtons.querySelectorAll("button")) b.classList.toggle("active", b === btn);
+    renderSelectedEvent();
+  });
+
+  // "what is this event" modal
+  el.whyBtn.addEventListener("click", () => {
+    const ev = state.events[state.selectedEventId];
+    if (!ev) return;
+    const pmUrl = ev.slug ? `https://polymarket.com/event/${encodeURIComponent(ev.slug)}` : "https://polymarket.com";
+    el.modalContent.innerHTML = `
+      <h3>${escapeHtml(ev.title)}</h3>
+      <p>
+        This is a real, currently-open question on Polymarket. There are
+        <strong>${ev.outcomes.length} possible answers</strong>, and when the real
+        event resolves, one will be declared the winner. Shares of the winning
+        answer pay $1. Shares of every losing answer pay $0.
+      </p>
+      <p>
+        The numbers on this page come straight from Polymarket's live order book —
+        same feed their website uses. See the original market here:
+      </p>
+      <p><a href="${pmUrl}" target="_blank" rel="noopener">View on polymarket.com →</a></p>
+    `;
+    el.modal.hidden = false;
+  });
+
+  // modal close
+  el.modal.addEventListener("click", (e) => {
+    if (e.target.dataset?.close !== undefined) el.modal.hidden = true;
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") el.modal.hidden = true;
+  });
+}
+
 function startUptimeTicker() {
   setInterval(() => {
     const secs = Math.floor((Date.now() - state.startTime) / 1000);
     const mm = String(Math.floor(secs / 60)).padStart(2, "0");
     const ss = String(secs % 60).padStart(2, "0");
-    sideUptime.textContent = `${mm}:${ss}`;
+    el.statUptime.textContent = `${mm}:${ss}`;
   }, 1000);
 }
 
@@ -434,11 +480,5 @@ function formatSize(s) {
   return s.toFixed(0);
 }
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[c]));
-}
-function truncate(s, n) {
-  s = String(s);
-  return s.length > n ? s.slice(0, n - 1) + "…" : s;
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
