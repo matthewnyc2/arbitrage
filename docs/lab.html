@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://rsms.me/" />
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <link rel="stylesheet" href="assets/style.css?v=7" />
-<link rel="stylesheet" href="assets/lab.css?v=2" />
+<link rel="stylesheet" href="assets/lab.css?v=3" />
 </head>
 <body>
 
@@ -52,6 +52,17 @@
         </div>
         <h1 id="active-strategy-name">—</h1>
         <p id="active-strategy-desc" class="lead">—</p>
+
+        <div class="bankroll-row">
+          <span class="bankroll-lbl">Imagine you followed this strategy with a bankroll of</span>
+          <div class="bankroll-choices" id="bankroll-choices">
+            <button type="button" data-bankroll="100">$100</button>
+            <button type="button" data-bankroll="1000" class="active">$1,000</button>
+            <button type="button" data-bankroll="10000">$10,000</button>
+            <button type="button" data-bankroll="100000">$100,000</button>
+          </div>
+          <span class="bankroll-note" id="bankroll-note">Each opportunity gets your full bankroll. Between opportunities, the money sits in cash.</span>
+        </div>
       </div>
     </section>
 
@@ -68,19 +79,19 @@
         <div class="verdict-stats">
           <div class="vstat">
             <div class="vstat-val" id="vstat-pnl">—</div>
-            <div class="vstat-lbl">Total profit (bet $1 each trade)</div>
+            <div class="vstat-lbl" id="vstat-pnl-lbl">Total profit across every trade</div>
           </div>
           <div class="vstat">
             <div class="vstat-val" id="vstat-roi">—</div>
-            <div class="vstat-lbl">Return on each dollar bet</div>
+            <div class="vstat-lbl">Return on bankroll per trade</div>
           </div>
           <div class="vstat">
             <div class="vstat-val" id="vstat-trades">—</div>
-            <div class="vstat-lbl">Trades this strategy took</div>
+            <div class="vstat-lbl">Trades taken (out of 93 events)</div>
           </div>
           <div class="vstat">
             <div class="vstat-val" id="vstat-winrate">—</div>
-            <div class="vstat-lbl">Fraction that made money</div>
+            <div class="vstat-lbl">Fraction of trades that won</div>
           </div>
         </div>
 
@@ -168,6 +179,6 @@
   </p>
 </footer>
 
-<script src="assets/lab.js?v=2"></script>
+<script src="assets/lab.js?v=3"></script>
 </body>
 </html>

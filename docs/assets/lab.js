@@ -177,6 +177,7 @@ const state = {
   results: {},            // key -> backtest result
   activeKey: "basket-arb",
   tradeFilter: "all",
+  bankroll: 1000,          // how much you'd commit per opportunity
 };
 
 // ==========================  DOM  =========================================
@@ -198,9 +199,12 @@ const el = {
   verdictLabel:  $("#verdict-label"),
   verdictDetail: $("#verdict-detail"),
   vstatPnl:      $("#vstat-pnl"),
+  vstatPnlLbl:   $("#vstat-pnl-lbl"),
   vstatRoi:      $("#vstat-roi"),
   vstatTrades:   $("#vstat-trades"),
   vstatWinrate:  $("#vstat-winrate"),
+  bankrollChoices: $("#bankroll-choices"),
+  bankrollNote:  $("#bankroll-note"),
   verdictExplainer: $("#verdict-explainer"),
   cntAll:        $("#cnt-all"),
   cntTrades:     $("#cnt-trades"),
@@ -263,6 +267,16 @@ function wireInteractions() {
   const dl = document.getElementById("csv-download");
   if (dl) dl.addEventListener("click", (e) => { e.preventDefault(); downloadCsv(); });
 
+  // Bankroll selector
+  el.bankrollChoices.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-bankroll]");
+    if (!btn) return;
+    state.bankroll = parseInt(btn.dataset.bankroll, 10) || 1000;
+    [...el.bankrollChoices.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b === btn));
+    renderActiveStrategy();
+    renderStrategyGrid();
+  });
+
   // Modal close
   el.modal.addEventListener("click", (e) => {
     if (e.target.dataset?.close !== undefined) el.modal.hidden = true;
@@ -307,27 +321,29 @@ function renderVerdict(strategy, result) {
   el.verdictCard.className = "verdict-card " + cls;
   el.verdictIcon.textContent = cls === "win" ? "✓" : cls === "loss" ? "✗" : "≈";
 
-  const { pnlAbs, roi, trades, wins, losses, skipped, eventCount, totalCost } = result;
+  const { roi, trades, wins, losses, eventCount } = result;
+  const totalPnl = roi * state.bankroll * trades;  // bet $bankroll each trade, PnL per trade = roi*bankroll
 
   if (trades === 0) {
     el.verdictLabel.textContent = "Strategy never triggered";
     el.verdictDetail.textContent = `Across ${eventCount} resolved Polymarket events, this strategy's rule never fired even once. That's the honest answer: the trade this strategy looks for is extremely rare in resting prices.`;
   } else if (cls === "win") {
-    el.verdictLabel.textContent = "Profitable on this dataset";
-    el.verdictDetail.textContent = `Across ${trades} trades on ${eventCount} real resolved events, this strategy made money — ${wins} wins, ${losses} losses.`;
+    el.verdictLabel.textContent = "Made money on this dataset";
+    el.verdictDetail.textContent = `${trades} trades on ${eventCount} real resolved events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total profit was ${formatSignedDollar(totalPnl)}.`;
   } else if (cls === "loss") {
-    el.verdictLabel.textContent = "Loses money on this dataset";
-    el.verdictDetail.textContent = `Across ${trades} trades on ${eventCount} real resolved events, this strategy lost money — ${wins} wins, ${losses} losses.`;
+    el.verdictLabel.textContent = "Lost money on this dataset";
+    el.verdictDetail.textContent = `${trades} trades on ${eventCount} real resolved events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total loss was ${formatSignedDollar(totalPnl)}.`;
   } else {
     el.verdictLabel.textContent = "Roughly break-even";
-    el.verdictDetail.textContent = `Across ${trades} trades on ${eventCount} real resolved events, this strategy finished within a cent of breakeven.`;
+    el.verdictDetail.textContent = `${trades} trades on ${eventCount} real resolved events. Total profit with a $${state.bankroll.toLocaleString()} bankroll was ${formatSignedDollar(totalPnl)} — essentially nothing.`;
   }
 
-  // stats
-  el.vstatPnl.textContent = formatSignedDollar(pnlAbs);
-  el.vstatPnl.className = "vstat-val " + (pnlAbs > 0 ? "pos" : pnlAbs < 0 ? "neg" : "");
+  el.vstatPnl.textContent = formatSignedDollar(totalPnl);
+  el.vstatPnl.className = "vstat-val " + (totalPnl > 0.005 ? "pos" : totalPnl < -0.005 ? "neg" : "");
+  el.vstatPnlLbl.textContent = `Total profit at $${state.bankroll.toLocaleString()} per trade`;
+
   el.vstatRoi.textContent = trades > 0 ? formatSignedPct(roi) : "—";
-  el.vstatRoi.className = "vstat-val " + (roi > 0 ? "pos" : roi < 0 ? "neg" : "");
+  el.vstatRoi.className = "vstat-val " + (roi > 0.0001 ? "pos" : roi < -0.0001 ? "neg" : "");
   el.vstatTrades.textContent = `${trades} of ${eventCount}`;
   el.vstatTrades.className = "vstat-val";
   el.vstatWinrate.textContent = trades > 0 ? `${(result.winRate * 100).toFixed(1)}%` : "—";
@@ -423,14 +439,23 @@ function renderTradeRow(r) {
     : "skip";
   row.className = "trade-row " + cls;
 
+  // Scale by bankroll: if backtest cost was $0.40 for one share, and bankroll is
+  // $1000, the trader would buy $1000/$0.40 = 2500 units — scaled pnl = roi * bankroll.
+  const unitRoi = r.result.cost > 0 ? (r.pnl / r.result.cost) : 0;
+  const scaledCost = didTrade ? state.bankroll : 0;
+  const scaledPayout = didTrade ? state.bankroll * (1 + unitRoi) : 0;
+  const scaledPnl = scaledPayout - scaledCost;
+
   const meta = didTrade
-    ? `paid $${(r.result.cost || 0).toFixed(3)} → received $${(r.result.payout || 0).toFixed(3)}`
+    ? `paid $${scaledCost.toLocaleString(undefined, {maximumFractionDigits:2})} → got back $${scaledPayout.toLocaleString(undefined, {maximumFractionDigits:2})}`
     : (r.result.note || "Strategy did not trade this event.");
 
   const resultCell = didTrade
-    ? (r.pnl > 0
-        ? `<span class="trade-result pos">+$${r.pnl.toFixed(3)}</span>`
-        : `<span class="trade-result neg">-$${Math.abs(r.pnl).toFixed(3)}</span>`)
+    ? (scaledPnl > 0.005
+        ? `<span class="trade-result pos">+$${scaledPnl.toLocaleString(undefined, {maximumFractionDigits:2})}</span>`
+        : scaledPnl < -0.005
+          ? `<span class="trade-result neg">-$${Math.abs(scaledPnl).toLocaleString(undefined, {maximumFractionDigits:2})}</span>`
+          : `<span class="trade-result neutral">$0.00</span>`)
     : `<span class="trade-result neutral">skipped</span>`;
 
   row.innerHTML = `
@@ -454,8 +479,9 @@ function renderStrategyGrid() {
     const card = document.createElement("div");
     card.className = "strat-card" + (s.key === state.activeKey ? " active" : "");
     const metric = r.trades > 0 ? formatSignedPct(r.roi) : "never fired";
+    const totalScaledPnl = r.roi * state.bankroll * r.trades;
     const metricSub = r.trades > 0
-      ? `total ${formatSignedDollar(r.pnlAbs)} across ${r.trades} trades`
+      ? `${formatSignedDollar(totalScaledPnl)} total at $${state.bankroll.toLocaleString()}/trade · ${r.trades} trades`
       : `skipped all ${r.eventCount} events`;
     const verdictLabel = r.trades === 0 ? "INACTIVE"
                        : cls === "win"  ? "PROFITABLE"

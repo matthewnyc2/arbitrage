@@ -67,6 +67,28 @@
   max-width: 740px; margin: 0; line-height: 1.55;
 }
 
+.bankroll-row {
+  margin-top: 1.4rem; padding: 0.9rem 1rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+}
+.bankroll-lbl { font-size: 0.9rem; color: var(--text-2); font-weight: 500; }
+.bankroll-choices { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+.bankroll-choices button {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text-2); font-size: 0.9rem; font-weight: 600;
+  padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer;
+  font-family: var(--mono);
+  transition: all 0.1s ease;
+}
+.bankroll-choices button:hover { border-color: var(--border-2); color: var(--text); }
+.bankroll-choices button.active { background: var(--accent); border-color: var(--accent); color: white; }
+.bankroll-note {
+  flex-basis: 100%; font-size: 0.8rem; color: var(--text-3);
+  margin-top: 0.2rem;
+}
+
 /* Verdict section */
 .verdict-section { padding: 2.2rem 1.5rem; background: var(--surface); border-bottom: 1px solid var(--border); }
 .verdict-inner { max-width: 1120px; margin: 0 auto; }
