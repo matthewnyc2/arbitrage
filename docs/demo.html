@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Live demo — Polymarket Arbitrage Scanner</title>
-<meta name="description" content="Watches Polymarket's public order books in real time and detects categorical events where the sum of best-ask prices drops below $1 — a risk-free arbitrage." />
+<meta name="description" content="Live scanner for risk-free arbitrage on Polymarket prediction markets. Watches real events in real time and flags the rare moments when buying one share of every outcome costs less than $1." />
 <link rel="preconnect" href="https://rsms.me/" />
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-<link rel="stylesheet" href="assets/style.css?v=4" />
+<link rel="stylesheet" href="assets/style.css?v=5" />
 </head>
 <body>
 
@@ -17,49 +17,74 @@
     <div class="brand">
       <span id="conn-dot" class="dot pend"></span>
       <span>Polymarket Arbitrage Scanner</span>
-      <span id="conn-label" class="status-text">connecting…</span>
+      <span id="conn-label" class="status-text">connecting to Polymarket…</span>
     </div>
     <div class="nav-links">
       <a href="index.html">← about</a>
+      <a href="https://polymarket.com" target="_blank" rel="noopener">Polymarket</a>
       <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">GitHub</a>
     </div>
   </nav>
 
   <section class="explainer">
     <div class="explainer-inner">
-      <h1>What you're looking at</h1>
-      <p>
-        A categorical Polymarket event is a market like "Who wins the 2028 Election?"
-        where every outcome is a separate YES token and exactly one outcome will win.
-        In fair pricing, the sum of the cheapest offers across every outcome must equal
-        <strong>$1.00</strong> — because if you buy one share of each, the winning
-        outcome pays you $1. When that sum dips below $1 for a moment, you can lock in
-        the gap as risk-free profit. This page watches every active negRisk event's
-        live order book and shows the math in real time.
+      <h1>What this page does, in plain English</h1>
+      <p class="lede">
+        <strong>Polymarket</strong> is a prediction market — people bet real
+        money on real-world questions like <em>"Who wins the 2028 election?"</em>
+        or <em>"Will the Fed cut rates in April?"</em>. Every possible answer
+        trades as a share that pays <strong>$1 if it wins</strong> and <strong>$0 if it loses</strong>.
+        Because exactly one answer can win, the total price of one share of
+        <em>every</em> answer has to add up to $1 at fair value. When it
+        briefly adds up to <strong>less than $1</strong>, you can buy one of
+        each and lock in the gap as guaranteed profit. That's the arbitrage.
       </p>
+      <p class="lede">
+        This page opens a live connection to Polymarket's order book,
+        watches <strong><span id="watch-count">6</span> real events</strong>,
+        and shows the total cost in real time. If the total crosses below $1,
+        you'll see it turn green in the opportunities panel on the right.
+      </p>
+
+      <div class="worked-example" id="worked-example">
+        <span class="tag">live example</span>
+        <span id="worked-text" class="muted">reading a real event…</span>
+      </div>
+
       <div class="legend">
-        <span class="chip-neg">above $1.00 · no arb</span>
-        <span class="chip-warn">within 1% of $1.00 · near-miss</span>
-        <span class="chip-pos">below $1.00 · arbitrage</span>
+        <span class="chip-neg">above $1 · fair pricing, no arb</span>
+        <span class="chip-warn">within 1¢ of $1 · near miss</span>
+        <span class="chip-pos">below $1 · guaranteed profit</span>
       </div>
     </div>
   </section>
 
-  <nav class="event-picker">
-    <div class="event-picker-inner" id="event-picker">
-      <div class="event-pill" style="pointer-events:none">loading events…</div>
-    </div>
-  </nav>
+  <div class="event-picker-wrap">
+    <div class="event-picker-header">Events being watched right now — click any tab to inspect it</div>
+    <nav class="event-picker">
+      <div class="event-picker-inner" id="event-picker">
+        <div class="event-pill" style="pointer-events:none">loading…</div>
+      </div>
+    </nav>
+  </div>
 
   <div class="demo-body">
 
     <section class="event-detail">
-      <h2 id="event-title">—</h2>
-      <div class="subtitle" id="event-subtitle">Select an event from the tabs above.</div>
+      <div class="event-head">
+        <div>
+          <h2 id="event-title">—</h2>
+          <div class="subtitle" id="event-subtitle">Select an event from the tabs above.</div>
+        </div>
+      </div>
 
       <div class="basket-meter">
         <div class="basket-label">
-          <span class="lbl">Basket cost · buy 1 share of every outcome</span>
+          <div>
+            <span class="lbl">The arbitrage number</span>
+            <div class="sub-lbl">Total cost today if you bought one share of every possible answer to this event.
+              The event pays $1 when it resolves, so buying below $1 is free money.</div>
+          </div>
           <span class="status fair" id="basket-status">waiting</span>
         </div>
         <div class="values">
@@ -71,15 +96,23 @@
           <div class="marker-dollar" title="$1.00 threshold"></div>
         </div>
         <div class="threshold-bar-labels">
-          <span>$0.80</span>
-          <span style="position:absolute;left:50%;transform:translateX(-50%);">$1.00</span>
-          <span>$1.20</span>
+          <span>$0.80 (big profit)</span>
+          <span class="center">$1.00 (break-even)</span>
+          <span>$1.20 (overpriced)</span>
         </div>
       </div>
 
+      <div class="section-head">
+        <h3>The answers, ranked by how likely the market thinks they are</h3>
+        <p class="section-sub">
+          Each row is one possible answer to this event. The percentage is the
+          implied probability (if a share costs $0.72, the market thinks that
+          answer has a 72% chance). They should sum to roughly $1.
+        </p>
+      </div>
       <div class="outcome-list" id="outcome-list">
         <div class="outcome-row empty">
-          <div class="left"><div class="outcome-name">waiting for books…</div></div>
+          <div class="left"><div class="outcome-name">waiting for order books…</div></div>
           <div class="right"><div class="pct">—</div></div>
         </div>
       </div>
@@ -87,44 +120,57 @@
 
     <aside class="sidebar">
       <div class="side-card">
-        <h3>connection</h3>
+        <h3>live data feed</h3>
         <div class="stats-table">
           <div class="lbl">events watched</div><div class="val" id="stat-events">—</div>
-          <div class="lbl">tokens subscribed</div><div class="val" id="stat-tokens">—</div>
-          <div class="lbl">books populated</div><div class="val" id="stat-books">0</div>
-          <div class="lbl">WS messages</div><div class="val" id="stat-msgs">0</div>
-          <div class="lbl">uptime</div><div class="val" id="stat-uptime">00:00</div>
+          <div class="lbl">answers tracked</div><div class="val" id="stat-tokens">—</div>
+          <div class="lbl">order books active</div><div class="val" id="stat-books">0</div>
+          <div class="lbl">price updates received</div><div class="val" id="stat-msgs">0</div>
+          <div class="lbl">running for</div><div class="val" id="stat-uptime">00:00</div>
         </div>
-      </div>
-
-      <div class="side-card">
-        <h3>opportunities this session</h3>
-        <div class="opp-list" id="opps-stream"></div>
-        <div class="empty-state" id="opps-empty">
-          None yet. Arbitrage windows on public prediction markets are rare and
-          brief — serious market-makers compete them away in milliseconds. You
-          may watch for many minutes before one flashes.
-        </div>
-      </div>
-
-      <div class="side-card">
-        <h3>how this works</h3>
-        <p class="side-note">
-          Your browser opens a WebSocket to Polymarket's public CLOB
-          (<code>ws-subscriptions-clob.polymarket.com</code>) and subscribes to
-          every outcome token of the events on the left. For each tick, it
-          updates the local L2 book and recomputes the basket cost. No server,
-          no backend, no keys — the page is the bot.
+        <p class="side-note" style="margin-top: 0.8rem;">
+          Every price update you see came from Polymarket's servers in the last
+          few seconds. Nothing is mocked, cached, or faked.
         </p>
       </div>
 
       <div class="side-card">
-        <h3>safety</h3>
+        <h3>arbitrage alerts</h3>
+        <div class="opp-list" id="opps-stream"></div>
+        <div class="empty-state" id="opps-empty">
+          <strong>None yet — and that's normal.</strong><br>
+          Arbitrage windows on Polymarket are rare and brief. Professional
+          trading bots compete them away in milliseconds. You might watch
+          for many minutes before one appears, if ever. That's the honest
+          answer, and seeing it prove out live is more valuable than a fake
+          demo that lights up every second.
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>what would happen if one fired?</h3>
         <p class="side-note">
-          This demo is <strong>read-only</strong>. It does not hold funds,
-          sign, or submit orders. The production Python version in the repo
-          gates order submission behind <code>ARB_MODE=live</code> plus an
-          operator-toggled <code>dry_run</code> flag.
+          In the full Python version of this bot, a real arbitrage alert kicks
+          off a risk check (basket size, daily loss cap, kill switch), then
+          signs and submits buy orders on every outcome in parallel. Once it
+          holds one share of every answer, it redeems the set for the
+          guaranteed $1 payout and books the spread as profit.
+        </p>
+        <p class="side-note">
+          <strong>This page never does any of that.</strong> It's read-only —
+          it watches, it shows the math, it logs what it sees. No wallet, no
+          orders, no risk.
+        </p>
+      </div>
+
+      <div class="side-card">
+        <h3>why you see "no arbitrage" almost always</h3>
+        <p class="side-note">
+          The math is public, so every serious market-maker watches the same
+          numbers. When the total drops below $1, they pile in within
+          milliseconds and push it back to $1. Retail traders see the
+          occasional scrap on thin, ignored markets — but the obvious
+          opportunities are taken before you can click.
         </p>
       </div>
     </aside>
@@ -133,9 +179,14 @@
 </div>
 
 <footer>
-  <p><a href="index.html">← project overview</a> · <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">source</a></p>
+  <p>
+    Real events. Real prices. Live Polymarket order book. No mocks.
+    <br>
+    <a href="index.html">← project overview</a> ·
+    <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">source code on GitHub</a>
+  </p>
 </footer>
 
-<script src="assets/demo.js?v=5"></script>
+<script src="assets/demo.js?v=6"></script>
 </body>
 </html>
