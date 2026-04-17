@@ -16,13 +16,12 @@
 
 // --- config ---------------------------------------------------------------
 
-const GAMMA_URL = "https://gamma-api.polymarket.com/events";
-const WS_URL    = "wss://ws-subscriptions-clob.polymarket.com/ws/market";
-const CORS_PROXIES = [
-  (u) => u,                                                              // direct
-  (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),  // big payloads ok
-  (u) => "https://corsproxy.io/?" + encodeURIComponent(u),               // 1MB cap
-];
+// Event list is published by a GitHub Action on schedule (see
+// .github/workflows/refresh-events.yml). Loading it from the same origin
+// sidesteps CORS on Polymarket's REST API. The WebSocket below streams live
+// book data directly — it has no CORS restriction.
+const EVENTS_URL = "./data/events.json";
+const WS_URL     = "wss://ws-subscriptions-clob.polymarket.com/ws/market";
 const MAX_EVENTS_TO_WATCH = 6;
 const PING_INTERVAL_MS    = 10_000;
 const FEE_BPS             = 0;
