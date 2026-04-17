@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Polymarket Strategy Lab — honest backtests</title>
+<meta name="description" content="See how five different arbitrage and betting strategies actually performed on 135 real resolved Polymarket events. No cherry-picked examples. No lies." />
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<link rel="stylesheet" href="assets/style.css?v=7" />
+<link rel="stylesheet" href="assets/lab.css?v=1" />
+</head>
+<body>
+
+<div class="lab-shell">
+
+  <nav class="demo-nav">
+    <div class="brand">
+      <span class="dot on"></span>
+      <strong>Polymarket Strategy Lab</strong>
+      <span class="status-text"><span id="event-count-inline">—</span> real resolved events · backtested in your browser</span>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">About the project</a>
+      <a href="demo.html">Live scanner</a>
+      <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">Source</a>
+    </div>
+  </nav>
+
+  <div class="tabs">
+    <div class="tabs-inner">
+      <button type="button" class="tab active" data-tab="results" id="tab-results">
+        Results
+      </button>
+      <button type="button" class="tab" data-tab="strategies" id="tab-strategies">
+        Strategies <span class="tab-count">5</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =================== RESULTS TAB =================== -->
+  <main class="panel active" id="panel-results">
+
+    <section class="lab-hero">
+      <div class="lab-hero-inner">
+        <div class="hero-strategy-row">
+          <div class="strategy-badge" id="active-strategy-label">Strategy</div>
+          <button type="button" class="switch-btn" id="switch-btn">
+            Change strategy
+            <span class="arrow">→</span>
+          </button>
+        </div>
+        <h1 id="active-strategy-name">—</h1>
+        <p id="active-strategy-desc" class="lead">—</p>
+      </div>
+    </section>
+
+    <section class="verdict-section">
+      <div class="verdict-inner">
+        <div class="verdict-card" id="verdict-card">
+          <div class="verdict-icon" id="verdict-icon">…</div>
+          <div class="verdict-body">
+            <div class="verdict-label" id="verdict-label">calculating…</div>
+            <div class="verdict-detail" id="verdict-detail">Running the strategy against every resolved event</div>
+          </div>
+        </div>
+
+        <div class="verdict-stats">
+          <div class="vstat">
+            <div class="vstat-val" id="vstat-pnl">—</div>
+            <div class="vstat-lbl">Total profit (bet $1 each trade)</div>
+          </div>
+          <div class="vstat">
+            <div class="vstat-val" id="vstat-roi">—</div>
+            <div class="vstat-lbl">Return on each dollar bet</div>
+          </div>
+          <div class="vstat">
+            <div class="vstat-val" id="vstat-trades">—</div>
+            <div class="vstat-lbl">Trades this strategy took</div>
+          </div>
+          <div class="vstat">
+            <div class="vstat-val" id="vstat-winrate">—</div>
+            <div class="vstat-lbl">Fraction that made money</div>
+          </div>
+        </div>
+
+        <p class="verdict-explainer" id="verdict-explainer">—</p>
+      </div>
+    </section>
+
+    <section class="trades-section">
+      <div class="trades-inner">
+        <div class="section-header">
+          <h2>Every trade, one row each</h2>
+          <p>
+            Each row below is one resolved Polymarket event. The strategy either
+            placed a trade or skipped it. When it traded, you can see exactly
+            what it paid, what it got back, and whether it won money.
+          </p>
+          <div class="trade-filter">
+            <button type="button" class="filter-btn active" data-filter="all">All <span id="cnt-all">0</span></button>
+            <button type="button" class="filter-btn" data-filter="trades">Took trade <span id="cnt-trades">0</span></button>
+            <button type="button" class="filter-btn" data-filter="wins">Wins <span id="cnt-wins">0</span></button>
+            <button type="button" class="filter-btn" data-filter="losses">Losses <span id="cnt-losses">0</span></button>
+            <button type="button" class="filter-btn" data-filter="skipped">Skipped <span id="cnt-skipped">0</span></button>
+          </div>
+        </div>
+        <div id="trade-list" class="trade-list"></div>
+      </div>
+    </section>
+
+    <section class="data-section">
+      <div class="data-inner">
+        <h2>Where this data comes from</h2>
+        <p>
+          Every event below was pulled live from Polymarket's public Gamma API
+          (the same one their website uses). These are
+          <strong>real resolved markets</strong> from the past few months —
+          events that have already concluded, with the winner decided. The
+          &ldquo;last trade price&rdquo; for each outcome is the final price
+          Polymarket recorded before the market closed.
+        </p>
+        <p>
+          The backtest runs entirely in your browser: when you select a
+          strategy, your browser applies the strategy's rule to each event
+          and tallies the result. You can open the developer console and see
+          the math. Nothing is pre-computed, cherry-picked, or faked.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- =================== STRATEGIES TAB =================== -->
+  <main class="panel" id="panel-strategies">
+    <section class="strategies-hero">
+      <div class="strategies-hero-inner">
+        <h1>Pick a strategy to see how it actually performed</h1>
+        <p>
+          Each of these strategies has a clear rule. Each was run against the
+          same <span id="event-count-strat">—</span> real resolved Polymarket
+          events. Results are plain: did it make money or lose money, and by
+          how much.
+        </p>
+      </div>
+    </section>
+
+    <section class="strategy-grid-section">
+      <div class="strategy-grid" id="strategy-grid"></div>
+    </section>
+  </main>
+
+</div>
+
+<!-- strategy detail modal -->
+<div class="modal" id="strategy-modal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card modal-wide">
+    <button type="button" class="modal-x" data-close aria-label="close">×</button>
+    <div id="strategy-modal-content"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>
+    Backtested on real, resolved Polymarket events —
+    <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">source on GitHub</a> ·
+    <a href="index.html">About this portfolio</a>
+  </p>
+</footer>
+
+<script src="assets/lab.js?v=1"></script>
+</body>
+</html>
