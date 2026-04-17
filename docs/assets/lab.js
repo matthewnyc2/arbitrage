@@ -36,18 +36,16 @@ const STRATEGIES = [
     oneLiner: "Buy one share of every outcome — but only when the total cost is under $1.",
     rule: "If the sum of every outcome's last trade price is below $1.00, buy one share of every outcome. Otherwise skip. Exactly one outcome will win and pay $1, so you profit the gap.",
     why: "This is the textbook risk-free trade. It's the one real arbitrage on prediction markets. The question is: does it ever actually trigger in practice, on resting prices, for a retail bot that isn't co-located next to the exchange? The historical data tells the truth.",
-    run(ev) {
-      const prices = ev.outcomes.map(o => o.last_trade_price).filter(p => p != null && p > 0 && p < 1);
-      if (prices.length !== ev.outcomes.length) {
-        return { action: "skip", cost: 0, payout: 0, sum: null, note: "Missing prices for one or more outcomes — couldn't evaluate." };
+    run(ev, window) {
+      const prices = ev.outcomes.map(o => priceAt(o, window));
+      if (prices.some(p => p == null || p <= 0 || p >= 1)) {
+        return { action: "skip", cost: 0, payout: 0, sum: null, note: "Missing or degenerate prices — couldn't evaluate." };
       }
       const sum = prices.reduce((a, b) => a + b, 0);
       if (sum >= 1.0) {
-        return { action: "skip", cost: 0, payout: 0, sum, note: `Total cost was $${sum.toFixed(3)}, above $1. No arbitrage — skipped.` };
+        return { action: "skip", cost: 0, payout: 0, sum, note: `Total cost $${sum.toFixed(3)}, above $1. No arbitrage — skipped.` };
       }
-      const cost = sum;
-      const payout = 1.0;  // exactly one outcome wins and pays $1
-      return { action: "trade", cost, payout, sum, note: `Total cost $${sum.toFixed(3)}, below $1. Bought complete set, received $1 guaranteed.` };
+      return { action: "trade", cost: sum, payout: 1.0, sum, note: `Total cost $${sum.toFixed(3)}. Bought the full set — guaranteed $1 payout.` };
     },
   },
 
@@ -55,20 +53,21 @@ const STRATEGIES = [
     key: "favorite",
     name: "Bet the Favorite",
     oneLiner: "On every event, buy the single outcome the market thinks is most likely.",
-    rule: "For each event, buy one share of whichever outcome has the highest last-trade price. If that outcome wins, you get $1. If any other outcome wins, you get $0.",
-    why: "Conventional wisdom: the market knows. If the favorite wins often enough, you make money. If the market systematically over-prices favorites, you lose. This tests whether Polymarket's favorites are priced fairly.",
-    run(ev) {
-      let best = null;
+    rule: "For each event, buy one share of whichever outcome has the highest price at the chosen time window. If that outcome wins you get $1, otherwise $0.",
+    why: "Conventional wisdom: the market knows. If the favorite wins often enough you make money; if favorites are over-priced you lose. Tests whether Polymarket's top-line pricing has any slack.",
+    run(ev, window) {
+      let best = null, bestPrice = -1;
       for (const o of ev.outcomes) {
-        if (o.last_trade_price == null) continue;
-        if (!best || o.last_trade_price > best.last_trade_price) best = o;
+        const p = priceAt(o, window);
+        if (p == null) continue;
+        if (p > bestPrice) { best = o; bestPrice = p; }
       }
-      if (!best) return { action: "skip", cost: 0, payout: 0, note: "No prices available." };
+      if (!best || bestPrice <= 0) return { action: "skip", cost: 0, payout: 0, note: "No valid prices." };
       return {
         action: "trade",
-        cost: best.last_trade_price,
-        payout: best.yes_final_price, // 1 if it won, 0 if it lost
-        note: `Bought "${best.name}" at $${best.last_trade_price.toFixed(3)}. ${best.yes_final_price === 1 ? "It won — payout $1." : "It lost — payout $0."}`,
+        cost: bestPrice,
+        payout: best.yes_final_price,
+        note: `Bought "${best.name}" at $${bestPrice.toFixed(3)}. ${best.yes_final_price === 1 ? "Won — payout $1." : "Lost — payout $0."}`,
       };
     },
   },
@@ -77,20 +76,21 @@ const STRATEGIES = [
     key: "longshot",
     name: "Bet the Longshot",
     oneLiner: "On every event, buy the cheapest outcome. Pray it wins.",
-    rule: "For each event, buy one share of whichever outcome has the lowest positive last-trade price. Small cost, huge payout if it wins — but it almost never does.",
-    why: "The market prices longshots low for a reason. But is it correct? Maybe underdogs win more often than prices imply (a classic behavioral-finance bias). This strategy cleanly tests the claim.",
-    run(ev) {
-      let best = null;
+    rule: "For each event, buy one share of whichever outcome has the lowest positive price at the chosen window.",
+    why: "The market prices longshots low for a reason. But if underdogs win more often than prices imply (a classic bias), this pays. Direct test.",
+    run(ev, window) {
+      let best = null, bestPrice = Infinity;
       for (const o of ev.outcomes) {
-        if (o.last_trade_price == null || o.last_trade_price <= 0) continue;
-        if (!best || o.last_trade_price < best.last_trade_price) best = o;
+        const p = priceAt(o, window);
+        if (p == null || p <= 0) continue;
+        if (p < bestPrice) { best = o; bestPrice = p; }
       }
-      if (!best) return { action: "skip", cost: 0, payout: 0, note: "No prices available." };
+      if (!best) return { action: "skip", cost: 0, payout: 0, note: "No valid prices." };
       return {
         action: "trade",
-        cost: best.last_trade_price,
+        cost: bestPrice,
         payout: best.yes_final_price,
-        note: `Bought "${best.name}" at $${best.last_trade_price.toFixed(3)}. ${best.yes_final_price === 1 ? "It won — payout $1." : "It lost — payout $0."}`,
+        note: `Bought "${best.name}" at $${bestPrice.toFixed(3)}. ${best.yes_final_price === 1 ? "Won — payout $1." : "Lost — payout $0."}`,
       };
     },
   },
@@ -99,12 +99,12 @@ const STRATEGIES = [
     key: "equal-split",
     name: "Equal Split",
     oneLiner: "Buy one share of every outcome, always — no matter the price.",
-    rule: "For each event, buy one share of every single outcome. You pay the sum of prices. You receive $1 because exactly one outcome wins.",
-    why: "This is Basket Arbitrage without the safety condition — just always buy the basket. Every event is a tiny guaranteed loss equal to the &ldquo;vig&rdquo; (the amount above $1 that Polymarket's prices sum to). A baseline for what the market's average over-roundedness costs.",
-    run(ev) {
-      const prices = ev.outcomes.map(o => o.last_trade_price).filter(p => p != null && p > 0);
-      if (prices.length !== ev.outcomes.length) {
-        return { action: "skip", cost: 0, payout: 0, note: "Missing prices for one or more outcomes." };
+    rule: "For each event, buy one share of every outcome. You pay the sum of prices. You receive $1 (exactly one wins).",
+    why: "Basket Arbitrage without the safety condition. Every event is a tiny guaranteed loss equal to the &ldquo;vig&rdquo; — the amount by which Polymarket's prices overshoot $1. A baseline for what the market's rounding costs.",
+    run(ev, window) {
+      const prices = ev.outcomes.map(o => priceAt(o, window));
+      if (prices.some(p => p == null || p <= 0)) {
+        return { action: "skip", cost: 0, payout: 0, note: "Missing prices." };
       }
       const cost = prices.reduce((a, b) => a + b, 0);
       return { action: "trade", cost, payout: 1.0, note: `Paid $${cost.toFixed(3)} for every outcome. Guaranteed $1 payout.` };
@@ -115,19 +115,19 @@ const STRATEGIES = [
     key: "top-three",
     name: "Top Three",
     oneLiner: "Buy the three outcomes the market thinks are most likely. Win if any of them wins.",
-    rule: "For each event with 3+ outcomes, buy one share of the three highest-priced outcomes. Pay the sum. Win $1 if any of those three wins.",
-    why: "A hedged bet: you're buying most of the probability mass but skipping the tail. If the hit rate is high enough, it pays. If not, you're paying for protection you don't need.",
-    run(ev) {
-      const prices = ev.outcomes.filter(o => o.last_trade_price != null && o.last_trade_price > 0);
-      if (prices.length < 3) return { action: "skip", cost: 0, payout: 0, note: "Event has fewer than 3 outcomes — strategy doesn't apply." };
-      const top = [...prices].sort((a, b) => b.last_trade_price - a.last_trade_price).slice(0, 3);
-      const cost = top.reduce((s, o) => s + o.last_trade_price, 0);
-      const won = top.some(o => o.yes_final_price === 1);
+    rule: "For each event with 3+ outcomes, buy one share of the three highest-priced outcomes at the chosen window. Pay the sum. Win $1 if any of those three wins.",
+    why: "A hedged bet — buying most of the probability mass but skipping the tail. If the hit rate is high enough, it pays.",
+    run(ev, window) {
+      const priced = ev.outcomes.map(o => ({ o, p: priceAt(o, window) })).filter(x => x.p != null && x.p > 0);
+      if (priced.length < 3) return { action: "skip", cost: 0, payout: 0, note: "Fewer than 3 priced outcomes." };
+      const top = [...priced].sort((a, b) => b.p - a.p).slice(0, 3);
+      const cost = top.reduce((s, x) => s + x.p, 0);
+      const won = top.some(x => x.o.yes_final_price === 1);
       return {
         action: "trade",
         cost,
         payout: won ? 1.0 : 0.0,
-        note: `Bought top 3 (total $${cost.toFixed(3)}). ${won ? "One of the three won — payout $1." : "None of the three won — payout $0."}`,
+        note: `Bought top 3 (total $${cost.toFixed(3)}). ${won ? "One won — payout $1." : "None won — payout $0."}`,
       };
     },
   },
@@ -135,13 +135,13 @@ const STRATEGIES = [
 
 // ==========================  BACKTEST RUNNER  =============================
 
-function runBacktest(strategy, events) {
+function runBacktest(strategy, events, window) {
   const rows = [];
   let totalCost = 0, totalPayout = 0;
   let trades = 0, wins = 0, losses = 0, skipped = 0;
 
   for (const ev of events) {
-    const result = strategy.run(ev);
+    const result = strategy.run(ev, window);
     const pnl = (result.payout || 0) - (result.cost || 0);
     const row = { event: ev, result, pnl };
     rows.push(row);
@@ -174,11 +174,25 @@ function runBacktest(strategy, events) {
 
 const state = {
   events: [],
-  results: {},            // key -> backtest result
+  results: {},            // key -> backtest result (for current window)
   activeKey: "basket-arb",
   tradeFilter: "all",
-  bankroll: 1000,          // how much you'd commit per opportunity
+  bankroll: 1000,
+  priceWindow: "24h",     // "close" | "24h" | "7d"
 };
+
+/**
+ * Extract the price a bot would have seen at a given window before close.
+ * Uses Gamma's oneDayPriceChange / oneWeekPriceChange to back-compute.
+ */
+function priceAt(outcome, window) {
+  const last = outcome.last_trade_price;
+  if (last == null) return null;
+  if (window === "close") return last;
+  const delta = window === "24h" ? (outcome.one_day_change  || 0)
+                                 : (outcome.one_week_change || 0);
+  return Math.max(0, Math.min(1, last - delta));
+}
 
 // ==========================  DOM  =========================================
 
@@ -245,13 +259,17 @@ async function boot() {
   el.eventCountInline.textContent = `${state.events.length} events · ${formatSpanDescription(state.spanFirst, state.spanLast)}`;
   el.eventCountStrat.textContent = state.events.length;
 
-  for (const s of STRATEGIES) {
-    state.results[s.key] = runBacktest(s, state.events);
-  }
+  rerunBacktests();
 
   wireInteractions();
   renderStrategyGrid();
   renderActiveStrategy();
+}
+
+function rerunBacktests() {
+  for (const s of STRATEGIES) {
+    state.results[s.key] = runBacktest(s, state.events, state.priceWindow);
+  }
 }
 
 function formatSpanDescription(first, last, withMonths = true) {
@@ -293,6 +311,18 @@ function wireInteractions() {
     if (!btn) return;
     state.bankroll = parseInt(btn.dataset.bankroll, 10) || 1000;
     [...el.bankrollChoices.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b === btn));
+    renderActiveStrategy();
+    renderStrategyGrid();
+  });
+
+  // Price-window selector
+  const windowChoices = document.getElementById("window-choices");
+  windowChoices.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-window]");
+    if (!btn) return;
+    state.priceWindow = btn.dataset.window;
+    [...windowChoices.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b === btn));
+    rerunBacktests();
     renderActiveStrategy();
     renderStrategyGrid();
   });

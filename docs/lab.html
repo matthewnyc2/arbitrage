@@ -54,14 +54,27 @@
         <p id="active-strategy-desc" class="lead">—</p>
 
         <div class="bankroll-row">
-          <span class="bankroll-lbl">Imagine you followed this strategy with a bankroll of</span>
+          <span class="bankroll-lbl">Bankroll per opportunity</span>
           <div class="bankroll-choices" id="bankroll-choices">
             <button type="button" data-bankroll="100">$100</button>
             <button type="button" data-bankroll="1000" class="active">$1,000</button>
             <button type="button" data-bankroll="10000">$10,000</button>
             <button type="button" data-bankroll="100000">$100,000</button>
           </div>
-          <span class="bankroll-note" id="bankroll-note">Each opportunity gets your full bankroll. Between opportunities, the money sits in cash.</span>
+        </div>
+
+        <div class="bankroll-row">
+          <span class="bankroll-lbl">Trade at prices from</span>
+          <div class="bankroll-choices" id="window-choices">
+            <button type="button" data-window="close">at close</button>
+            <button type="button" data-window="24h" class="active">24h before close</button>
+            <button type="button" data-window="7d">7 days before close</button>
+          </div>
+          <span class="bankroll-note" id="window-note">
+            Close prices are fully resolved. 24h-before-close reflects what a scanner
+            bot would have actually seen on the order book the day before resolution —
+            where tradable arbitrage actually lives.
+          </span>
         </div>
       </div>
     </section>
@@ -126,20 +139,30 @@
 
     <section class="data-section">
       <div class="data-inner">
-        <h2>Where this data comes from</h2>
+        <h2>What you're looking at, in plain English</h2>
         <p>
-          Every event below was pulled live from Polymarket's public Gamma API
-          (the same one their website uses). These are
-          <strong>real resolved markets</strong> from the past few months —
-          events that have already concluded, with the winner decided. The
-          &ldquo;last trade price&rdquo; for each outcome is the final price
-          Polymarket recorded before the market closed.
+          These 93 events are real Polymarket markets that have already
+          ended in the last four months. For each one we know who won and
+          what the prices were at the end. The page pretends you ran a
+          trading strategy on every single one of these, then tallies up
+          how much money you would have made or lost.
         </p>
         <p>
-          The backtest runs entirely in your browser: when you select a
-          strategy, your browser applies the strategy's rule to each event
-          and tallies the result. You can open the developer console and see
-          the math. Nothing is pre-computed, cherry-picked, or faked.
+          The <strong>"trade at prices from"</strong> selector above is the
+          important knob. Prices at the moment a market closes are almost
+          always correct (because by then everyone knows the answer). Prices
+          <strong>a day before the market closes</strong> are less tight —
+          people make more mistakes, and that's where real profit lives. Try
+          switching between the three options and watch the numbers change.
+        </p>
+        <p>
+          <strong>Fair warning:</strong> the &ldquo;24h before close&rdquo;
+          and &ldquo;7d before close&rdquo; prices are estimates — we work
+          them out from how much each outcome's price moved in that window.
+          A few trades with huge gaps are probably wrong (they come from
+          outcomes that didn't exist a week ago). But most of the data is
+          real enough to trust the pattern: <strong>the earlier you look,
+          the more genuine arbitrage you find.</strong>
         </p>
       </div>
     </section>
@@ -183,6 +206,6 @@
   </p>
 </footer>
 
-<script src="assets/lab.js?v=5"></script>
+<script src="assets/lab.js?v=6"></script>
 </body>
 </html>
