@@ -11,8 +11,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-from datetime import datetime
-from typing import Sequence
+from collections.abc import Sequence
 
 from .config import Mode, settings
 from .logging_setup import configure_logging
@@ -70,10 +69,10 @@ async def _cmd_discover(loop: bool, interval: int, max_pages: int) -> None:
 async def _cmd_scan() -> None:
     from .book.l2 import BookRegistry
     from .clients.polymarket_ws import run_market_channels
+    from .engine.live_executor import LiveExecutor
     from .engine.loop import hydrate_event_index, run_scan_loop
     from .engine.opportunity import EventIndex, OpportunityEngine
     from .engine.paper_fills import PaperExecutor
-    from .engine.live_executor import LiveExecutor
 
     books = BookRegistry()
     index = EventIndex()

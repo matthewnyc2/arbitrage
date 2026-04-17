@@ -100,7 +100,7 @@ class MarketChannel:
                 if self._stop.is_set():
                     return
                 delay = 1.0
-            except (ConnectionClosed, OSError, asyncio.TimeoutError) as exc:
+            except (TimeoutError, ConnectionClosed, OSError) as exc:
                 delay = next(backoff_cycle)
                 logger.warning(
                     "ws disconnect ({}); reconnecting in {}s", exc.__class__.__name__, delay

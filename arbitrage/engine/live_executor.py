@@ -196,7 +196,7 @@ class LiveExecutor:
         fills: list[Fill] = []
         total_cost = Decimal(0)
         shortfall: dict[str, Decimal] = {}
-        for leg, res in zip(opp.legs, results):
+        for leg, res in zip(opp.legs, results, strict=True):
             if isinstance(res, Exception):
                 logger.error("leg {} raised: {}", leg.token_id, res)
                 shortfall[leg.token_id] = leg.size
@@ -220,7 +220,8 @@ class LiveExecutor:
             return fill, Decimal(0)
 
         client = self._ensure_clob()
-        from py_clob_client.clob_types import OrderArgs, OrderType as ClobOrderType
+        from py_clob_client.clob_types import OrderArgs
+        from py_clob_client.clob_types import OrderType as ClobOrderType
 
         args = OrderArgs(
             token_id=leg.token_id,
@@ -258,7 +259,8 @@ class LiveExecutor:
                             fill.token_id, fill.size)
                 continue
             client = self._ensure_clob()
-            from py_clob_client.clob_types import OrderArgs, OrderType as ClobOrderType
+            from py_clob_client.clob_types import OrderArgs
+            from py_clob_client.clob_types import OrderType as ClobOrderType
             args = OrderArgs(
                 token_id=fill.token_id,
                 price=0.0,  # market
