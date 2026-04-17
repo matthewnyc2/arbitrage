@@ -1,0 +1,81 @@
+name: refresh event list
+
+on:
+  schedule:
+    - cron: "17 * * * *"    # hourly at :17
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-events
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Polymarket events + extract negRisk
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/data
+          curl -sSLf \
+            "https://gamma-api.polymarket.com/events?closed=false&archived=false&active=true&limit=25&order=volume24hr&ascending=false" \
+            -o /tmp/raw.json
+          python3 - <<'PY'
+          import json, os, datetime, pathlib
+          raw = json.loads(pathlib.Path('/tmp/raw.json').read_text(encoding='utf-8'))
+          neg = [e for e in raw if e.get('negRisk')]
+          out = []
+          for ev in neg:
+              markets = ev.get('markets') or []
+              if len(markets) < 2:
+                  continue
+              outcomes = []
+              ok = True
+              for i, m in enumerate(markets):
+                  if m.get('closed') or m.get('archived'):
+                      ok = False; break
+                  ids = m.get('clobTokenIds')
+                  if isinstance(ids, str):
+                      try: ids = json.loads(ids)
+                      except Exception: ids = None
+                  if not isinstance(ids, list) or not ids:
+                      ok = False; break
+                  name = m.get('groupItemTitle') or m.get('outcome') or m.get('question') or f'Outcome {i+1}'
+                  outcomes.append({'token_id': str(ids[0]), 'name': str(name)})
+              if not ok or len(outcomes) < 2:
+                  continue
+              out.append({
+                  'id':    ev.get('negRiskMarketID') or str(ev.get('id')),
+                  'title': ev.get('title') or ev.get('slug') or 'Event',
+                  'slug':  ev.get('slug'),
+                  'outcomes': outcomes,
+              })
+              if len(out) >= 8:
+                  break
+          payload = {
+              'generated_at': datetime.datetime.now(datetime.UTC).isoformat(),
+              'events': out,
+          }
+          pathlib.Path('docs/data/events.json').write_text(
+              json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8'
+          )
+          print(f'wrote {len(out)} events')
+          PY
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet docs/data/events.json; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name  "events-refresh-bot"
+          git config user.email "events-refresh-bot@users.noreply.github.com"
+          git add docs/data/events.json
+          git commit -m "chore(events): refresh snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
