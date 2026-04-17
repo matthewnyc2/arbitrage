@@ -254,11 +254,16 @@ async function boot() {
   renderActiveStrategy();
 }
 
-function formatSpanDescription(first, last) {
+function formatSpanDescription(first, last, withMonths = true) {
   if (!first || !last) return "";
   const fmt = { month: "short", year: "numeric" };
+  const range = `${first.toLocaleDateString(undefined, fmt)} – ${last.toLocaleDateString(undefined, fmt)}`;
+  if (!withMonths) return range;
   const months = (state.spanDays / 30).toFixed(1);
-  return `${first.toLocaleDateString(undefined, fmt)} – ${last.toLocaleDateString(undefined, fmt)} (${months} months)`;
+  return `${range} (${months} months)`;
+}
+function pluralize(n, word) {
+  return n === 1 ? `1 ${word}` : `${n} ${word}s`;
 }
 
 function wireInteractions() {
@@ -340,20 +345,21 @@ function renderVerdict(strategy, result) {
   const totalPnl = roi * state.bankroll * trades;  // bet $bankroll each trade, PnL per trade = roi*bankroll
 
   const months = (state.spanDays / 30).toFixed(1);
-  const span   = formatSpanDescription(state.spanFirst, state.spanLast);
+  const span   = formatSpanDescription(state.spanFirst, state.spanLast, false);
+  const firedN = pluralize(trades, "time");
 
   if (trades === 0) {
     el.verdictLabel.textContent = "Strategy never triggered";
     el.verdictDetail.textContent = `Over ${months} months of real Polymarket events (${span}), this strategy's rule never fired even once. Pure arbitrage on resting prices almost never exists — bots eat any gap in milliseconds.`;
   } else if (cls === "win") {
     el.verdictLabel.textContent = "Made money on this dataset";
-    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${trades} times across ${eventCount} events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total profit was ${formatSignedDollar(totalPnl)}.`;
+    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${firedN} across ${eventCount} events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total profit was ${formatSignedDollar(totalPnl)}.`;
   } else if (cls === "loss") {
     el.verdictLabel.textContent = "Lost money on this dataset";
-    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${trades} times across ${eventCount} events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total loss was ${formatSignedDollar(totalPnl)}.`;
+    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${firedN} across ${eventCount} events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total loss was ${formatSignedDollar(totalPnl)}.`;
   } else {
     el.verdictLabel.textContent = "Roughly break-even";
-    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${trades} times across ${eventCount} events. Total profit with a $${state.bankroll.toLocaleString()} bankroll was ${formatSignedDollar(totalPnl)} — essentially nothing.`;
+    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${firedN} across ${eventCount} events. Total profit with a $${state.bankroll.toLocaleString()} bankroll was ${formatSignedDollar(totalPnl)} — essentially nothing.`;
   }
 
   el.vstatPnl.textContent = formatSignedDollar(totalPnl);
