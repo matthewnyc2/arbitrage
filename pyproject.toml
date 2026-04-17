@@ -63,7 +63,17 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "B", "UP", "SIM", "RUF", "ASYNC"]
-ignore = ["E501"]  # line length handled by formatter
+ignore = [
+  "E501",     # line length handled by formatter
+  "N817",     # `Decimal as D` alias is an intentional test convention
+  "UP042",    # str+Enum is fine; migrating to StrEnum is cosmetic
+  "N818",     # RiskDenied is a flow-control exception, Error suffix unneeded
+  "SIM105",   # try/except/pass reads fine for cancellation suppression
+  "SIM118",   # x in dict.keys() is explicit; not always a win to remove
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["F401"]   # test fixtures commonly import for side effects
 
 [tool.mypy]
 python_version = "3.12"
