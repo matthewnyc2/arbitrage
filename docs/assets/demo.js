@@ -14,6 +14,15 @@
  */
 
 const GAMMA_URL = "https://gamma-api.polymarket.com/events";
+// Gamma API does not send CORS headers, so browser fetches from github.io are
+// blocked. We try direct first (in case that changes) and fall back to a
+// public CORS proxy. Only used for the initial event list — the WebSocket
+// itself has no CORS restriction.
+const CORS_PROXIES = [
+  (u) => u,                                  // direct
+  (u) => "https://corsproxy.io/?" + encodeURIComponent(u),
+  (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+];
 const WS_URL    = "wss://ws-subscriptions-clob.polymarket.com/ws/market";
 const MAX_EVENTS_TO_WATCH = 6;
 const PING_INTERVAL_MS    = 10_000;
