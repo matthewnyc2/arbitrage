@@ -203,6 +203,7 @@ const el = {
   vstatRoi:      $("#vstat-roi"),
   vstatTrades:   $("#vstat-trades"),
   vstatWinrate:  $("#vstat-winrate"),
+  vstatAnnual:   $("#vstat-annual"),
   bankrollChoices: $("#bankroll-choices"),
   bankrollNote:  $("#bankroll-note"),
   verdictExplainer: $("#verdict-explainer"),
@@ -226,17 +227,24 @@ boot().catch(err => {
 });
 
 async function boot() {
-  // Load events
   const resp = await fetch(DATA_URL + "?t=" + Date.now());
   if (!resp.ok) throw new Error("historical-events.json " + resp.status);
   const payload = await resp.json();
   state.events = Array.isArray(payload?.events) ? payload.events : [];
   if (!state.events.length) throw new Error("No events found in dataset");
 
-  el.eventCountInline.textContent = state.events.length;
+  // Figure out the date span covered by the 93 events so we can annualize PnL.
+  const ends = state.events
+    .map(e => new Date((e.closed_time || e.end_date || "").replace(" +00", "+00:00")))
+    .filter(d => !isNaN(d.getTime()))
+    .sort((a, b) => a - b);
+  state.spanFirst = ends[0];
+  state.spanLast  = ends[ends.length - 1];
+  state.spanDays  = Math.max(1, (state.spanLast - state.spanFirst) / (1000 * 60 * 60 * 24));
+
+  el.eventCountInline.textContent = `${state.events.length} events · ${formatSpanDescription(state.spanFirst, state.spanLast)}`;
   el.eventCountStrat.textContent = state.events.length;
 
-  // Run every strategy up-front (they're all cheap)
   for (const s of STRATEGIES) {
     state.results[s.key] = runBacktest(s, state.events);
   }
@@ -244,6 +252,13 @@ async function boot() {
   wireInteractions();
   renderStrategyGrid();
   renderActiveStrategy();
+}
+
+function formatSpanDescription(first, last) {
+  if (!first || !last) return "";
+  const fmt = { month: "short", year: "numeric" };
+  const months = (state.spanDays / 30).toFixed(1);
+  return `${first.toLocaleDateString(undefined, fmt)} – ${last.toLocaleDateString(undefined, fmt)} (${months} months)`;
 }
 
 function wireInteractions() {
@@ -324,18 +339,21 @@ function renderVerdict(strategy, result) {
   const { roi, trades, wins, losses, eventCount } = result;
   const totalPnl = roi * state.bankroll * trades;  // bet $bankroll each trade, PnL per trade = roi*bankroll
 
+  const months = (state.spanDays / 30).toFixed(1);
+  const span   = formatSpanDescription(state.spanFirst, state.spanLast);
+
   if (trades === 0) {
     el.verdictLabel.textContent = "Strategy never triggered";
-    el.verdictDetail.textContent = `Across ${eventCount} resolved Polymarket events, this strategy's rule never fired even once. That's the honest answer: the trade this strategy looks for is extremely rare in resting prices.`;
+    el.verdictDetail.textContent = `Over ${months} months of real Polymarket events (${span}), this strategy's rule never fired even once. Pure arbitrage on resting prices almost never exists — bots eat any gap in milliseconds.`;
   } else if (cls === "win") {
     el.verdictLabel.textContent = "Made money on this dataset";
-    el.verdictDetail.textContent = `${trades} trades on ${eventCount} real resolved events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total profit was ${formatSignedDollar(totalPnl)}.`;
+    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${trades} times across ${eventCount} events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total profit was ${formatSignedDollar(totalPnl)}.`;
   } else if (cls === "loss") {
     el.verdictLabel.textContent = "Lost money on this dataset";
-    el.verdictDetail.textContent = `${trades} trades on ${eventCount} real resolved events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total loss was ${formatSignedDollar(totalPnl)}.`;
+    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${trades} times across ${eventCount} events. ${wins} wins, ${losses} losses. At a $${state.bankroll.toLocaleString()} bankroll per trade, total loss was ${formatSignedDollar(totalPnl)}.`;
   } else {
     el.verdictLabel.textContent = "Roughly break-even";
-    el.verdictDetail.textContent = `${trades} trades on ${eventCount} real resolved events. Total profit with a $${state.bankroll.toLocaleString()} bankroll was ${formatSignedDollar(totalPnl)} — essentially nothing.`;
+    el.verdictDetail.textContent = `Over ${months} months (${span}) this strategy fired ${trades} times across ${eventCount} events. Total profit with a $${state.bankroll.toLocaleString()} bankroll was ${formatSignedDollar(totalPnl)} — essentially nothing.`;
   }
 
   el.vstatPnl.textContent = formatSignedDollar(totalPnl);
@@ -348,6 +366,11 @@ function renderVerdict(strategy, result) {
   el.vstatTrades.className = "vstat-val";
   el.vstatWinrate.textContent = trades > 0 ? `${(result.winRate * 100).toFixed(1)}%` : "—";
   el.vstatWinrate.className = "vstat-val";
+
+  // Annualized profit: scale the total by (365 / span)
+  const annualPnl = totalPnl * (365 / state.spanDays);
+  el.vstatAnnual.textContent = trades > 0 ? formatSignedDollar(annualPnl) : "—";
+  el.vstatAnnual.className = "vstat-val " + (annualPnl > 0.005 ? "pos" : annualPnl < -0.005 ? "neg" : "");
 
   el.verdictExplainer.innerHTML = strategy.why;
 }
