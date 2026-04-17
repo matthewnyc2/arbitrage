@@ -99,7 +99,7 @@ bootstrap().catch((err) => {
 });
 
 async function bootstrap() {
-  setConn("pend", "fetching active events from Polymarket…");
+  setConn("pend", "loading active Polymarket events…");
   const events = await fetchActiveNegRiskEvents();
   if (!events.length) {
     setConn("bad", "no active negRisk events found — Polymarket may be quiet");
