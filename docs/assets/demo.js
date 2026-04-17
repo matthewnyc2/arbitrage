@@ -121,52 +121,18 @@ async function bootstrap() {
 // --- REST fetch with proxy fallback ---------------------------------------
 
 async function fetchActiveNegRiskEvents() {
-  const url = new URL(GAMMA_URL);
-  url.searchParams.set("closed", "false");
-  url.searchParams.set("archived", "false");
-  url.searchParams.set("active", "true");
-  url.searchParams.set("limit", "25");
-  url.searchParams.set("order", "volume24hr");
-  url.searchParams.set("ascending", "false");
-
-  let lastErr = null;
-  let raw = null;
-  for (const wrap of CORS_PROXIES) {
-    try {
-      const resp = await fetch(wrap(url.toString()));
-      if (!resp.ok) { lastErr = new Error("Gamma /events " + resp.status); continue; }
-      raw = await resp.json();
-      break;
-    } catch (e) { lastErr = e; }
-  }
-  if (raw === null) throw lastErr || new Error("All fetch strategies failed");
-  if (!Array.isArray(raw)) return [];
-
+  const resp = await fetch(EVENTS_URL + "?t=" + Date.now());
+  if (!resp.ok) throw new Error("events.json " + resp.status);
+  const payload = await resp.json();
+  const raw = Array.isArray(payload?.events) ? payload.events : [];
   const kept = [];
   for (const ev of raw) {
-    if (!ev.negRisk) continue;
-    const markets = ev.markets || [];
-    if (markets.length < 2) continue;
-    const outcomes = [];
-    for (let i = 0; i < markets.length; i++) {
-      const m = markets[i];
-      if (m.closed || m.archived) { outcomes.length = 0; break; }
-      let ids = m.clobTokenIds;
-      if (typeof ids === "string") {
-        try { ids = JSON.parse(ids); } catch { ids = null; }
-      }
-      if (!Array.isArray(ids) || !ids.length) { outcomes.length = 0; break; }
-      outcomes.push({
-        token_id: String(ids[0]),
-        name: m.groupItemTitle || m.outcome || m.question || ("Outcome " + (i + 1)),
-      });
-    }
-    if (outcomes.length < 2) continue;
+    if (!Array.isArray(ev.outcomes) || ev.outcomes.length < 2) continue;
     kept.push({
-      id: ev.negRiskMarketID || String(ev.id),
-      title: ev.title || ev.slug || "Event",
+      id: String(ev.id),
+      title: String(ev.title || "Event"),
       slug:  ev.slug,
-      outcomes,
+      outcomes: ev.outcomes.map(o => ({ token_id: String(o.token_id), name: String(o.name) })),
       sum: null,
       lastUpdate: 0,
     });
