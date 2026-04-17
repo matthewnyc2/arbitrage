@@ -141,9 +141,19 @@ async function fetchActiveNegRiskEvents() {
   url.searchParams.set("order", "volume24hr");
   url.searchParams.set("ascending", "false");
 
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error("Gamma /events " + resp.status);
-  const raw = await resp.json();
+  let lastErr = null;
+  let raw = null;
+  for (const wrap of CORS_PROXIES) {
+    try {
+      const resp = await fetch(wrap(url.toString()));
+      if (!resp.ok) { lastErr = new Error("Gamma /events " + resp.status); continue; }
+      raw = await resp.json();
+      break;
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  if (raw === null) throw lastErr || new Error("All fetch strategies failed");
   if (!Array.isArray(raw)) return [];
 
   const kept = [];
