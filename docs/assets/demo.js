@@ -3,9 +3,10 @@
  *
  * What it does:
  *   1. Fetches a handful of active negRisk categorical events from Polymarket's
- *      public Gamma REST API.
+ *      public Gamma REST API (via a CORS proxy since Gamma doesn't send CORS
+ *      headers; the WebSocket path below has no such restriction).
  *   2. Opens a WebSocket to the public CLOB market channel.
- *   3. Subscribes to all outcome token ids for the selected events.
+ *   3. Subscribes to every outcome token of those events.
  *   4. Maintains per-token L2 order book state (book snapshots + price_change deltas).
  *   5. On every update, recomputes Σ best-ask for the affected event; when it
  *      crosses below $1 net of an estimated fee+gas spread, fires an opportunity.
@@ -13,57 +14,60 @@
  * This runs entirely in the browser. No backend, no keys, no state leaves the tab.
  */
 
+// --- config ---------------------------------------------------------------
+
 const GAMMA_URL = "https://gamma-api.polymarket.com/events";
-// Gamma API does not send CORS headers, so browser fetches from github.io are
-// blocked. Try direct first, then fall back to a public proxy. allorigins is
-// preferred because corsproxy.io has a 1MB body limit and Gamma's /events
-// payload with full market bodies is ~8MB.
+const WS_URL    = "wss://ws-subscriptions-clob.polymarket.com/ws/market";
 const CORS_PROXIES = [
   (u) => u,                                                              // direct
   (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),  // big payloads ok
-  (u) => "https://corsproxy.io/?" + encodeURIComponent(u),               // last resort
+  (u) => "https://corsproxy.io/?" + encodeURIComponent(u),               // 1MB cap
 ];
-const WS_URL    = "wss://ws-subscriptions-clob.polymarket.com/ws/market";
 const MAX_EVENTS_TO_WATCH = 6;
 const PING_INTERVAL_MS    = 10_000;
-const FEE_BPS             = 0;          // Polymarket taker fee is currently 0
-const EST_GAS_USD         = 0.10;       // estimated gas per basket
-const EST_BASKET_SIZE     = 100;        // for gas amortisation display only
-const MIN_NET_EDGE_BPS    = 25;         // dashboard threshold (wider than prod)
+const FEE_BPS             = 0;
+const EST_GAS_USD         = 0.10;
+const EST_BASKET_SIZE     = 100;
+const MIN_NET_EDGE_BPS    = 25;     // flash an opp when net edge >= 25 bps
+const NEAR_ARB_THRESHOLD  = 0.01;   // show warn band when cost is within 1% of $1
 
-// --- DOM shortcuts ---------------------------------------------------------
+// --- DOM ------------------------------------------------------------------
 
 const $ = (sel) => document.querySelector(sel);
-const eventList     = $("#event-list");
-const bookWrap      = $("#book-wrap");
-const selectedTitle = $("#selected-title");
-const basketSummary = $("#basket-summary");
-const oppsStream    = $("#opps-stream");
-const oppsEmpty     = $("#opps-empty");
-const connDot       = $("#conn-dot");
-const connLabel     = $("#conn-label");
-const statMsgs      = $("#stat-msgs");
-const statBooks     = $("#stat-books");
-const statOpps      = $("#stat-opps");
-const statUptime    = $("#stat-uptime");
+const connDot      = $("#conn-dot");
+const connLabel    = $("#conn-label");
+const picker       = $("#event-picker");
+const eventTitle   = $("#event-title");
+const eventSub     = $("#event-subtitle");
+const basketCost   = $("#basket-cost");
+const basketDelta  = $("#basket-delta");
+const basketStatus = $("#basket-status");
+const basketFill   = $("#basket-fill");
+const outcomeList  = $("#outcome-list");
+const sideEvents   = $("#stat-events");
+const sideTokens   = $("#stat-tokens");
+const sideBooks    = $("#stat-books");
+const sideMsgs     = $("#stat-msgs");
+const sideUptime   = $("#stat-uptime");
+const oppsStream   = $("#opps-stream");
+const oppsEmpty    = $("#opps-empty");
 
-// --- state -----------------------------------------------------------------
+// --- state ----------------------------------------------------------------
 
 const state = {
-  events: {},             // event_id -> {id, title, outcomes: [{token_id, name}], sum, lastUpdate}
-  books:  {},             // token_id -> {bids: SortedMap, asks: SortedMap, lastHash, updated}
-  tokenToEvent: {},       // token_id -> event_id
+  events: {},
+  books:  {},
+  tokenToEvent: {},
   selectedEventId: null,
   msgCount: 0,
   oppCount: 0,
   startTime: Date.now(),
   ws: null,
   pingTimer: null,
-  lastOppIdByEvent: {},   // dedupe flashing the same opp repeatedly
+  lastOppIdByEvent: {},
 };
 
-// Tiny sorted map (price -> size), good enough for the demo.
-// Uses a plain object + cached sorted keys; re-sorts on insert/delete.
+// Minimal sorted map for a price ladder.
 class Ladder {
   constructor() { this.m = {}; this.sortedKeys = null; }
   set(price, size) {
@@ -86,33 +90,17 @@ class Ladder {
     const p = ascending ? ks[0] : ks[ks.length - 1];
     return { price: p, size: this.m[p] };
   }
-  vwap(targetSize) {
-    if (targetSize <= 0 || !this.size()) return null;
-    let remaining = targetSize, cost = 0, filled = 0, levels = 0;
-    for (const p of this.keys()) {
-      const sz = this.m[p];
-      if (!sz) continue;
-      const take = Math.min(remaining, sz);
-      cost += take * p;
-      filled += take;
-      levels += 1;
-      remaining -= take;
-      if (remaining <= 0) break;
-    }
-    if (filled <= 0) return null;
-    return { vwap: cost / filled, filled, levels };
-  }
 }
 
 // --- bootstrap -------------------------------------------------------------
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   console.error("bootstrap failed", err);
   setConn("bad", "unable to load events — " + err.message);
 });
 
 async function bootstrap() {
-  setConn("pend", "fetching events from Gamma…");
+  setConn("pend", "fetching active events from Polymarket…");
   const events = await fetchActiveNegRiskEvents();
   if (!events.length) {
     setConn("bad", "no active negRisk events found — Polymarket may be quiet");
@@ -123,16 +111,17 @@ async function bootstrap() {
     for (const o of e.outcomes) state.tokenToEvent[o.token_id] = e.id;
   }
   state.selectedEventId = events[0].id;
-  renderEventList();
-  renderSelectedBooks();
+  sideEvents.textContent = Object.keys(state.events).length;
+  sideTokens.textContent = Object.keys(state.tokenToEvent).length;
+  renderEventPicker();
+  renderSelectedEvent();
   startUptimeTicker();
   connectWS();
 }
 
-// --- REST: pull active negRisk events --------------------------------------
+// --- REST fetch with proxy fallback ---------------------------------------
 
 async function fetchActiveNegRiskEvents() {
-  // Pull the first page by 24h volume, then filter client-side.
   const url = new URL(GAMMA_URL);
   url.searchParams.set("closed", "false");
   url.searchParams.set("archived", "false");
@@ -149,9 +138,7 @@ async function fetchActiveNegRiskEvents() {
       if (!resp.ok) { lastErr = new Error("Gamma /events " + resp.status); continue; }
       raw = await resp.json();
       break;
-    } catch (e) {
-      lastErr = e;
-    }
+    } catch (e) { lastErr = e; }
   }
   if (raw === null) throw lastErr || new Error("All fetch strategies failed");
   if (!Array.isArray(raw)) return [];
@@ -189,12 +176,12 @@ async function fetchActiveNegRiskEvents() {
   return kept;
 }
 
-// --- WebSocket -------------------------------------------------------------
+// --- WebSocket ------------------------------------------------------------
 
 function connectWS() {
   const tokenIds = Object.keys(state.tokenToEvent);
   if (!tokenIds.length) { setConn("bad", "no tokens to subscribe"); return; }
-  setConn("pend", "opening WebSocket…");
+  setConn("pend", "opening WebSocket to CLOB…");
 
   const ws = new WebSocket(WS_URL);
   state.ws = ws;
@@ -217,22 +204,17 @@ function connectWS() {
     if (typeof raw === "string") {
       const t = raw.trim();
       if (t === "PONG" || t === "PING") return;
-      try {
-        const payload = JSON.parse(t);
-        handlePayload(payload);
-      } catch { /* ignore malformed */ }
+      try { handlePayload(JSON.parse(t)); } catch { /* noop */ }
     }
   });
 
   ws.addEventListener("close", () => {
-    setConn("bad", "WebSocket closed — reconnecting in 3s");
+    setConn("bad", "WebSocket closed — reconnecting…");
     if (state.pingTimer) clearInterval(state.pingTimer);
     setTimeout(connectWS, 3000);
   });
 
-  ws.addEventListener("error", () => {
-    setConn("bad", "WebSocket error");
-  });
+  ws.addEventListener("error", () => setConn("bad", "WebSocket error"));
 }
 
 function handlePayload(payload) {
@@ -245,12 +227,10 @@ function handlePayload(payload) {
 
 function dispatch(msg) {
   state.msgCount++;
-  statMsgs.textContent = state.msgCount.toLocaleString();
-
+  sideMsgs.textContent = state.msgCount.toLocaleString();
   const t = msg.event_type;
   if (t === "book")          applyBookSnapshot(msg);
   else if (t === "price_change") applyPriceChange(msg);
-  // tick_size_change / last_trade_price / best_bid_ask ignored for the demo
 }
 
 function applyBookSnapshot(msg) {
@@ -271,8 +251,6 @@ function applyBookSnapshot(msg) {
       if (p > 0 && s > 0) book.asks.set(p, s);
     }
   }
-  book.updated = Date.now();
-  book.lastHash = msg.hash;
   onBookUpdate(assetId);
 }
 
@@ -289,8 +267,6 @@ function applyPriceChange(msg) {
     if (side === "BUY")       book.bids.set(p, s);
     else if (side === "SELL") book.asks.set(p, s);
     else continue;
-    book.updated = Date.now();
-    if (c.hash) book.lastHash = c.hash;
     touched.add(assetId);
   }
   for (const id of touched) onBookUpdate(id);
@@ -298,21 +274,20 @@ function applyPriceChange(msg) {
 
 function getBook(tokenId) {
   if (!state.books[tokenId]) {
-    state.books[tokenId] = { bids: new Ladder(), asks: new Ladder(),
-                             updated: 0, lastHash: null };
-    statBooks.textContent = Object.keys(state.books).length.toLocaleString();
+    state.books[tokenId] = { bids: new Ladder(), asks: new Ladder() };
+    sideBooks.textContent = Object.keys(state.books).length.toLocaleString();
   }
   return state.books[tokenId];
 }
 
-// --- engine: recompute basket math -----------------------------------------
+// --- engine ---------------------------------------------------------------
 
 function onBookUpdate(tokenId) {
   const eventId = state.tokenToEvent[tokenId];
   if (!eventId) return;
   evaluateEvent(eventId);
-  if (eventId === state.selectedEventId) renderSelectedBooks();
-  renderEventList();   // cheap enough to redo on every update
+  if (eventId === state.selectedEventId) renderSelectedEvent();
+  renderEventPicker(); // pill label updates live
 }
 
 function evaluateEvent(eventId) {
@@ -340,102 +315,140 @@ function evaluateEvent(eventId) {
 
 function pushOpportunity(ev, sum, netBps) {
   const prev = state.lastOppIdByEvent[ev.id];
-  // Dedupe if we just fired one for this event at a similar level.
   if (prev && (Date.now() - prev.at < 2500) && Math.abs(prev.bps - netBps) < 5) return;
   state.lastOppIdByEvent[ev.id] = { at: Date.now(), bps: netBps };
   state.oppCount += 1;
-  statOpps.textContent = state.oppCount.toLocaleString();
   oppsEmpty.style.display = "none";
 
   const div = document.createElement("div");
   div.className = "opp-alert";
   div.innerHTML = `
     <div class="when">${new Date().toLocaleTimeString()}</div>
-    <div class="headline">${escapeHtml(ev.title)}</div>
-    <div>Σ best-ask = <strong>$${sum.toFixed(4)}</strong> · net edge ≈ <strong>${netBps} bps</strong></div>
+    <div class="title">${escapeHtml(ev.title)}</div>
+    <div class="detail">basket $${sum.toFixed(4)} · edge ${netBps >= 0 ? "+" : ""}${netBps} bps</div>
   `;
   oppsStream.prepend(div);
-  // Keep the list bounded.
-  while (oppsStream.childNodes.length > 20) oppsStream.removeChild(oppsStream.lastChild);
+  while (oppsStream.childNodes.length > 12) oppsStream.removeChild(oppsStream.lastChild);
 }
 
-// --- rendering -------------------------------------------------------------
+// --- rendering ------------------------------------------------------------
 
 function setConn(cls, text) {
-  connDot.className = "status-dot " + cls;
+  connDot.className = "dot " + cls;
   connLabel.textContent = text;
 }
 
-function renderEventList() {
-  eventList.innerHTML = "";
-  const ids = Object.keys(state.events);
-  for (const id of ids) {
+function renderEventPicker() {
+  picker.innerHTML = "";
+  for (const id of Object.keys(state.events)) {
     const ev = state.events[id];
-    const card = document.createElement("div");
-    card.className = "event-card" + (id === state.selectedEventId ? " active" : "");
-    const sumCls = ev.sum === null ? "neu"
-                 : ev.sum < 1.00 ? "pos"
-                 : "neg";
-    const sumText = ev.sum === null ? "—" : "Σ " + ev.sum.toFixed(4);
-    card.innerHTML = `
-      <div class="title">${escapeHtml(ev.title)}</div>
-      <div class="meta">${ev.outcomes.length} outcomes</div>
-      <div class="sum ${sumCls}">${sumText}</div>
+    const pill = document.createElement("button");
+    const cls = classForSum(ev.sum);
+    pill.className = "event-pill" + (id === state.selectedEventId ? " active" : "")
+                    + (cls === "arb" ? " has-arb" : cls === "near" ? " near-arb" : "");
+    pill.innerHTML = `
+      <span>${escapeHtml(truncate(ev.title, 36))}</span>
+      <span class="pill-cost">${ev.sum === null ? "—" : "$" + ev.sum.toFixed(3)}</span>
     `;
-    card.addEventListener("click", () => {
+    pill.addEventListener("click", () => {
       state.selectedEventId = id;
-      renderEventList();
-      renderSelectedBooks();
+      renderEventPicker();
+      renderSelectedEvent();
     });
-    eventList.appendChild(card);
+    picker.appendChild(pill);
   }
 }
 
-function renderSelectedBooks() {
+function renderSelectedEvent() {
   const ev = state.events[state.selectedEventId];
-  if (!ev) { selectedTitle.textContent = "—"; bookWrap.innerHTML = ""; return; }
-  selectedTitle.textContent = ev.title;
+  if (!ev) return;
+  eventTitle.textContent = ev.title;
+  eventSub.textContent = `${ev.outcomes.length} outcomes · one will win, all others pay $0`;
 
-  bookWrap.innerHTML = "";
-  let sumOk = 0, any = 0;
+  // Collect best-asks
+  let sum = 0, complete = true;
+  const rows = [];
   for (const o of ev.outcomes) {
     const b = state.books[o.token_id];
     const best = b && b.asks.best(true);
-    any = (best ? (any + 1) : any);
-    if (best) sumOk += best.price;
-    const card = document.createElement("div");
-    card.className = "outcome";
-    if (best) {
-      card.innerHTML = `
-        <div class="name">${escapeHtml(o.name)}</div>
-        <div class="best-ask">$${best.price.toFixed(4)}</div>
-        <div class="size">ask size: ${formatSize(best.size)}</div>
-      `;
-    } else {
-      card.innerHTML = `
-        <div class="name">${escapeHtml(o.name)}</div>
-        <div class="best-ask empty">no asks yet</div>
-      `;
-    }
-    bookWrap.appendChild(card);
+    if (!best) { complete = false; rows.push({ ...o, price: null, size: null }); }
+    else { sum += best.price; rows.push({ ...o, price: best.price, size: best.size }); }
   }
+  // Sort outcomes by price descending (most likely outcome first)
+  rows.sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
 
-  if (any === ev.outcomes.length) {
-    const delta = 1 - sumOk;
-    const bps = Math.round(delta * 10_000);
-    const cls = delta > 0 ? "pos" : (delta < 0 ? "neg" : "neu");
-    basketSummary.innerHTML = `
-      Basket cost (1 share of each outcome at top of book):
-      <strong>$${sumOk.toFixed(4)}</strong>
-      · gross edge vs. $1 guarantee:
-      <span style="color: var(--${cls === "pos" ? "pos" : cls === "neg" ? "neg" : "muted"}); font-family: var(--mono);">
-        ${delta >= 0 ? "+" : ""}${delta.toFixed(4)} (${bps >= 0 ? "+" : ""}${bps} bps)
-      </span>
-      <span class="muted">· estimated gas ≈ $${EST_GAS_USD.toFixed(2)} amortised across a ${EST_BASKET_SIZE}-share basket</span>
-    `;
-  } else {
-    basketSummary.textContent = `Waiting on ${ev.outcomes.length - any} of ${ev.outcomes.length} books…`;
+  renderBasketMeter(complete ? sum : null);
+  renderOutcomeList(rows, complete ? sum : null);
+}
+
+function renderBasketMeter(sum) {
+  if (sum === null) {
+    basketCost.textContent = "—";
+    basketCost.className = "big-val";
+    basketDelta.textContent = "waiting for every outcome's book…";
+    basketDelta.className = "delta fair";
+    basketStatus.textContent = "loading";
+    basketStatus.className = "status fair";
+    basketFill.style.width = "0%";
+    basketFill.className = "fill";
+    return;
   }
+  const delta = sum - 1;
+  const cls = classForSum(sum);
+
+  basketCost.textContent = "$" + sum.toFixed(4);
+  basketCost.className = "big-val" + (cls === "arb" ? " arb" : cls === "near" ? " near" : "");
+
+  const sign = delta >= 0 ? "+" : "";
+  const bps = Math.round(delta * 10_000);
+  basketDelta.textContent = (cls === "arb"
+    ? `${sign}$${delta.toFixed(4)} below $1 · arbitrage of ${Math.abs(bps)} bps`
+    : cls === "near"
+    ? `${sign}$${delta.toFixed(4)} above $1 · no arbitrage yet (${bps} bps over)`
+    : `${sign}$${delta.toFixed(4)} above $1 · fair pricing, no arbitrage`);
+  basketDelta.className = "delta " + cls;
+
+  basketStatus.textContent = cls === "arb" ? "ARBITRAGE" : cls === "near" ? "NEAR MISS" : "FAIR";
+  basketStatus.className = "status " + cls;
+
+  // Map cost $0.80 → 0%, $1.00 → 50%, $1.20 → 100%
+  const pct = Math.max(0, Math.min(100, ((sum - 0.80) / 0.40) * 100));
+  basketFill.style.width = pct.toFixed(1) + "%";
+  basketFill.className = "fill" + (cls === "arb" ? " arb" : cls === "near" ? " near" : "");
+}
+
+function renderOutcomeList(rows, totalSum) {
+  outcomeList.innerHTML = "";
+  for (const r of rows) {
+    const row = document.createElement("div");
+    const hasPrice = r.price !== null;
+    const pct = hasPrice ? (r.price * 100) : 0;
+    row.className = "outcome-row" + (!hasPrice ? " empty" : "")
+                  + (hasPrice && totalSum !== null && totalSum < 1 && classForSum(totalSum) === "arb" ? " highlighted" : "");
+    const name = escapeHtml(r.name);
+    const pctText = hasPrice ? pct.toFixed(1) + "%" : "waiting";
+    const priceSize = hasPrice
+      ? `$${r.price.toFixed(4)} · ${formatSize(r.size)} shares`
+      : "no asks yet";
+    row.innerHTML = `
+      <div class="left">
+        <div class="outcome-name">${name}</div>
+        <div class="prob-bar"><div class="prob-fill" style="width: ${Math.min(100, pct).toFixed(1)}%"></div></div>
+      </div>
+      <div class="right">
+        <div class="pct">${pctText}</div>
+        <div class="price-size">${priceSize}</div>
+      </div>
+    `;
+    outcomeList.appendChild(row);
+  }
+}
+
+function classForSum(sum) {
+  if (sum === null || sum === undefined) return "fair";
+  if (sum < 1.0) return "arb";
+  if (sum <= 1.0 + NEAR_ARB_THRESHOLD) return "near";
+  return "fair";
 }
 
 function startUptimeTicker() {
@@ -443,19 +456,24 @@ function startUptimeTicker() {
     const secs = Math.floor((Date.now() - state.startTime) / 1000);
     const mm = String(Math.floor(secs / 60)).padStart(2, "0");
     const ss = String(secs % 60).padStart(2, "0");
-    statUptime.textContent = `${mm}:${ss}`;
+    sideUptime.textContent = `${mm}:${ss}`;
   }, 1000);
 }
 
-// --- utils -----------------------------------------------------------------
+// --- utils ----------------------------------------------------------------
 
 function formatSize(s) {
-  if (s >= 10_000) return (s / 1000).toFixed(1) + "k";
-  if (s >= 1_000)  return (s / 1000).toFixed(2) + "k";
+  if (s >= 1_000_000) return (s / 1_000_000).toFixed(2) + "M";
+  if (s >= 10_000)    return (s / 1_000).toFixed(1) + "k";
+  if (s >= 1_000)     return (s / 1_000).toFixed(2) + "k";
   return s.toFixed(0);
 }
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
+}
+function truncate(s, n) {
+  s = String(s);
+  return s.length > n ? s.slice(0, n - 1) + "…" : s;
 }
