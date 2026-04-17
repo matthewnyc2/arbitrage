@@ -137,7 +137,7 @@ async function fetchActiveNegRiskEvents() {
   url.searchParams.set("closed", "false");
   url.searchParams.set("archived", "false");
   url.searchParams.set("active", "true");
-  url.searchParams.set("limit", "80");
+  url.searchParams.set("limit", "25");
   url.searchParams.set("order", "volume24hr");
   url.searchParams.set("ascending", "false");
 
