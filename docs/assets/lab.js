@@ -37,6 +37,10 @@ const STRATEGIES = [
     rule: "If the sum of every outcome's last trade price is below $1.00, buy one share of every outcome. Otherwise skip. Exactly one outcome will win and pay $1, so you profit the gap.",
     why: "This is the textbook risk-free trade. It's the one real arbitrage on prediction markets. The question is: does it ever actually trigger in practice, on resting prices, for a retail bot that isn't co-located next to the exchange? The historical data tells the truth.",
     run(ev, window) {
+      const prices = ev.outcomes.map(o => priceAt(o, ev, window));
+      if (prices.some(p => p == null || p <= 0 || p >= 1)) {
+        return { action: "skip", cost: 0, payout: 0, sum: null, note: "No price data at this window for at least one outcome." };
+      }
       const sum = prices.reduce((a, b) => a + b, 0);
       if (sum >= 1.0) {
         return { action: "skip", cost: 0, payout: 0, sum, note: `Total cost $${sum.toFixed(3)}, above $1. No arbitrage — skipped.` };
