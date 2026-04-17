@@ -4,97 +4,138 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Live demo — Polymarket Arbitrage Scanner</title>
-<meta name="description" content="Live in-browser demo: connects to Polymarket's public CLOB WebSocket, maintains real L2 order books, computes basket arbitrage edge in real time." />
-<link rel="stylesheet" href="assets/style.css" />
+<meta name="description" content="Watches Polymarket's public order books in real time and detects categorical events where the sum of best-ask prices drops below $1 — a risk-free arbitrage." />
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<link rel="stylesheet" href="assets/style.css?v=4" />
 </head>
 <body>
 
-<div class="demo-header">
-  <h1>
-    <span id="conn-dot" class="status-dot pend"></span>
-    <span id="conn-label">connecting…</span>
-    &nbsp;·&nbsp; <span class="muted">browser-side live demo</span>
-  </h1>
-  <div class="nav">
-    <a href="index.html">← overview</a>
-    <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">GitHub</a>
+<div class="demo-shell">
+
+  <nav class="demo-nav">
+    <div class="brand">
+      <span id="conn-dot" class="dot pend"></span>
+      <span>Polymarket Arbitrage Scanner</span>
+      <span id="conn-label" class="status-text">connecting…</span>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">← about</a>
+      <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <section class="explainer">
+    <div class="explainer-inner">
+      <h1>What you're looking at</h1>
+      <p>
+        A categorical Polymarket event is a market like "Who wins the 2028 Election?"
+        where every outcome is a separate YES token and exactly one outcome will win.
+        In fair pricing, the sum of the cheapest offers across every outcome must equal
+        <strong>$1.00</strong> — because if you buy one share of each, the winning
+        outcome pays you $1. When that sum dips below $1 for a moment, you can lock in
+        the gap as risk-free profit. This page watches every active negRisk event's
+        live order book and shows the math in real time.
+      </p>
+      <div class="legend">
+        <span class="chip-neg">above $1.00 · no arb</span>
+        <span class="chip-warn">within 1% of $1.00 · near-miss</span>
+        <span class="chip-pos">below $1.00 · arbitrage</span>
+      </div>
+    </div>
+  </section>
+
+  <nav class="event-picker">
+    <div class="event-picker-inner" id="event-picker">
+      <div class="event-pill" style="pointer-events:none">loading events…</div>
+    </div>
+  </nav>
+
+  <div class="demo-body">
+
+    <section class="event-detail">
+      <h2 id="event-title">—</h2>
+      <div class="subtitle" id="event-subtitle">Select an event from the tabs above.</div>
+
+      <div class="basket-meter">
+        <div class="basket-label">
+          <span class="lbl">Basket cost · buy 1 share of every outcome</span>
+          <span class="status fair" id="basket-status">waiting</span>
+        </div>
+        <div class="values">
+          <span class="big-val" id="basket-cost">—</span>
+          <span class="delta" id="basket-delta">vs. $1.00 guaranteed payout</span>
+        </div>
+        <div class="threshold-bar">
+          <div class="fill" id="basket-fill" style="width: 0%;"></div>
+          <div class="marker-dollar" title="$1.00 threshold"></div>
+        </div>
+        <div class="threshold-bar-labels">
+          <span>$0.80</span>
+          <span style="position:absolute;left:50%;transform:translateX(-50%);">$1.00</span>
+          <span>$1.20</span>
+        </div>
+      </div>
+
+      <div class="outcome-list" id="outcome-list">
+        <div class="outcome-row empty">
+          <div class="left"><div class="outcome-name">waiting for books…</div></div>
+          <div class="right"><div class="pct">—</div></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="side-card">
+        <h3>connection</h3>
+        <div class="stats-table">
+          <div class="lbl">events watched</div><div class="val" id="stat-events">—</div>
+          <div class="lbl">tokens subscribed</div><div class="val" id="stat-tokens">—</div>
+          <div class="lbl">books populated</div><div class="val" id="stat-books">0</div>
+          <div class="lbl">WS messages</div><div class="val" id="stat-msgs">0</div>
+          <div class="lbl">uptime</div><div class="val" id="stat-uptime">00:00</div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>opportunities this session</h3>
+        <div class="opp-list" id="opps-stream"></div>
+        <div class="empty-state" id="opps-empty">
+          None yet. Arbitrage windows on public prediction markets are rare and
+          brief — serious market-makers compete them away in milliseconds. You
+          may watch for many minutes before one flashes.
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>how this works</h3>
+        <p class="side-note">
+          Your browser opens a WebSocket to Polymarket's public CLOB
+          (<code>ws-subscriptions-clob.polymarket.com</code>) and subscribes to
+          every outcome token of the events on the left. For each tick, it
+          updates the local L2 book and recomputes the basket cost. No server,
+          no backend, no keys — the page is the bot.
+        </p>
+      </div>
+
+      <div class="side-card">
+        <h3>safety</h3>
+        <p class="side-note">
+          This demo is <strong>read-only</strong>. It does not hold funds,
+          sign, or submit orders. The production Python version in the repo
+          gates order submission behind <code>ARB_MODE=live</code> plus an
+          operator-toggled <code>dry_run</code> flag.
+        </p>
+      </div>
+    </aside>
+
   </div>
 </div>
 
-<div class="demo-grid">
-
-  <aside>
-    <div class="panel">
-      <h2>how this works</h2>
-      <p class="small muted">
-        This page opens a WebSocket directly from your browser to
-        Polymarket's public CLOB (<code>ws-subscriptions-clob.polymarket.com</code>),
-        subscribes to a handful of active negRisk categorical events,
-        maintains L2 order-book state per outcome token, and recomputes the
-        basket-arb math on every delta. It's a port of the core engine from
-        the Python repo. No server, no backend — just your browser.
-      </p>
-      <p class="small muted" style="margin-top: 0.75rem;">
-        When <code>Σ best-ask</code> across all outcomes of an event drops
-        below <strong>$1.00</strong>, that event card turns green and lands
-        in the opportunities stream on the right.
-      </p>
-    </div>
-
-    <div class="panel" style="margin-top: 1rem;">
-      <h2>events watched</h2>
-      <div id="event-list"></div>
-    </div>
-
-    <div class="panel" style="margin-top: 1rem;">
-      <h2>stats</h2>
-      <div style="font-family: var(--mono); font-size: 0.85rem; line-height: 2;">
-        <div>messages rcvd: <span id="stat-msgs" class="muted">0</span></div>
-        <div>books tracked: <span id="stat-books" class="muted">0</span></div>
-        <div>opps detected: <span id="stat-opps" class="muted">0</span></div>
-        <div>uptime:        <span id="stat-uptime" class="muted">00:00</span></div>
-      </div>
-    </div>
-
-    <div class="panel" style="margin-top: 1rem;">
-      <h2>safety</h2>
-      <p class="small muted">
-        This page is read-only. It does not hold funds, sign, or submit
-        orders. Flipping to a live executor is gated in the Python repo
-        behind <code>ARB_MODE=live</code> + explicit wallet credentials +
-        an operator-toggled <code>dry_run</code> flag.
-      </p>
-    </div>
-  </aside>
-
-  <main>
-    <div class="panel">
-      <h2>order books — selected event</h2>
-      <div id="selected-title" class="muted" style="margin-bottom: 0.6rem; font-size: 0.95rem;">
-        loading…
-      </div>
-      <div id="book-wrap" class="book-wrap"></div>
-      <div id="basket-summary" class="small muted" style="margin-top: 1rem;"></div>
-    </div>
-
-    <div class="panel" style="margin-top: 1rem;">
-      <h2>opportunities stream</h2>
-      <div id="opps-stream"></div>
-      <p id="opps-empty" class="small muted">No opportunities yet. In practice
-      these are rare and fleeting — the whole point is that serious market
-      makers compete them away in milliseconds. You're watching to see how often
-      (if ever) one slips through.</p>
-    </div>
-  </main>
-</div>
-
 <footer>
-  <p class="small">
-    Live browser-side port of the Python engine · <a href="index.html">project overview</a> ·
-    <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">source</a>
-  </p>
+  <p><a href="index.html">← project overview</a> · <a href="https://github.com/matthewnyc2/arbitrage" target="_blank" rel="noopener">source</a></p>
 </footer>
 
-<script src="assets/demo.js?v=3"></script>
+<script src="assets/demo.js?v=4"></script>
 </body>
 </html>
