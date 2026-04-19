@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T22:29:40.828238+00:00",
+  "generated_at": "2026-04-19T23:29:37.293462+00:00",
   "events": [
     {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
@@ -1611,25 +1611,6 @@
         {
           "token_id": "50215073871096968248919471429375709194923170349720198135949181591811557036261",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0xd4f349afbc8e9997253adf1a732c00e16735a5036aaec4de49dc4f42dd4f3000",
-      "title": "Paris Saint-Germain FC vs. Olympique Lyonnais",
-      "slug": "fl1-psg-lyo-2026-04-19",
-      "outcomes": [
-        {
-          "token_id": "72761295714736700700315672853897654570882805898860490260172451043549801621711",
-          "name": "Paris Saint-Germain FC"
-        },
-        {
-          "token_id": "55645656731746756730325598686142300859014042686263153986663815004011930037971",
-          "name": "Draw (Paris Saint-Germain FC vs. Olympique Lyonnais)"
-        },
-        {
-          "token_id": "82398539176866080704747464924727622468359013304091254708422644925697057627878",
-          "name": "Olympique Lyonnais"
         }
       ]
     }
