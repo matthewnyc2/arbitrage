@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T20:35:48.189004+00:00",
+  "generated_at": "2026-04-22T21:36:29.151714+00:00",
   "events": [
     {
       "id": "0xfd3d474081b305a87c75e1249c29af21f16f310947574a1c3a534fd2a8add700",
@@ -17,6 +17,25 @@
         {
           "token_id": "17684283368478579011485556298092659675294671893414587403391837552748491189817",
           "name": "Club Atlético de Madrid"
+        }
+      ]
+    },
+    {
+      "id": "0x6d58897f1b350b476cdc5875a369c2e9a9fc4ef5f9d352891524dd2c2dbc6600",
+      "title": "Bayer 04 Leverkusen vs. FC Bayern München",
+      "slug": "dfb-lev-bay-2026-04-22",
+      "outcomes": [
+        {
+          "token_id": "63888526046514605803615002067918602247356995930306784011902340367901648243732",
+          "name": "Bayer 04 Leverkusen"
+        },
+        {
+          "token_id": "6170346719908147110080807007934416120176745445280586340011178144970571564929",
+          "name": "Draw (Bayer 04 Leverkusen vs. FC Bayern München)"
+        },
+        {
+          "token_id": "35879996198851431520546795659568541378604745056754922753450140925125312230308",
+          "name": "FC Bayern München"
         }
       ]
     },
@@ -563,25 +582,6 @@
       ]
     },
     {
-      "id": "0x6d58897f1b350b476cdc5875a369c2e9a9fc4ef5f9d352891524dd2c2dbc6600",
-      "title": "Bayer 04 Leverkusen vs. FC Bayern München",
-      "slug": "dfb-lev-bay-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "63888526046514605803615002067918602247356995930306784011902340367901648243732",
-          "name": "Bayer 04 Leverkusen"
-        },
-        {
-          "token_id": "6170346719908147110080807007934416120176745445280586340011178144970571564929",
-          "name": "Draw (Bayer 04 Leverkusen vs. FC Bayern München)"
-        },
-        {
-          "token_id": "35879996198851431520546795659568541378604745056754922753450140925125312230308",
-          "name": "FC Bayern München"
-        }
-      ]
-    },
-    {
       "id": "0xca3e6d866434291855e71f79828e2d622bd54f14c739155acee7a80a8f278b00",
       "title": "Eurovision Winner 2026",
       "slug": "eurovision-winner-2026",
@@ -988,6 +988,25 @@
         {
           "token_id": "104684177361879293772451967369395447852198309451265624296636331715537531335257",
           "name": "Candidate O"
+        }
+      ]
+    },
+    {
+      "id": "0x030679321c8f0dd80d972c15c9fb9eaae477ba326d426e5d6530b85911dea700",
+      "title": "AFC Bournemouth vs. Leeds United FC",
+      "slug": "epl-bou-lee-2026-04-22",
+      "outcomes": [
+        {
+          "token_id": "54840920599237320262677994264145087837352463836950714130750790975476640612362",
+          "name": "AFC Bournemouth"
+        },
+        {
+          "token_id": "91326196293927618208474925980392911976604390760542106327328942016613597627065",
+          "name": "Draw (AFC Bournemouth vs. Leeds United FC)"
+        },
+        {
+          "token_id": "49865209026284154730838919013206671020825469735154984501725817061904924001125",
+          "name": "Leeds United FC"
         }
       ]
     },
