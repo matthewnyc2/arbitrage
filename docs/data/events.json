@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T21:36:29.151714+00:00",
+  "generated_at": "2026-04-22T22:34:01.928429+00:00",
   "events": [
     {
       "id": "0xfd3d474081b305a87c75e1249c29af21f16f310947574a1c3a534fd2a8add700",
@@ -17,25 +17,6 @@
         {
           "token_id": "17684283368478579011485556298092659675294671893414587403391837552748491189817",
           "name": "Club Atlético de Madrid"
-        }
-      ]
-    },
-    {
-      "id": "0x6d58897f1b350b476cdc5875a369c2e9a9fc4ef5f9d352891524dd2c2dbc6600",
-      "title": "Bayer 04 Leverkusen vs. FC Bayern München",
-      "slug": "dfb-lev-bay-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "63888526046514605803615002067918602247356995930306784011902340367901648243732",
-          "name": "Bayer 04 Leverkusen"
-        },
-        {
-          "token_id": "6170346719908147110080807007934416120176745445280586340011178144970571564929",
-          "name": "Draw (Bayer 04 Leverkusen vs. FC Bayern München)"
-        },
-        {
-          "token_id": "35879996198851431520546795659568541378604745056754922753450140925125312230308",
-          "name": "FC Bayern München"
         }
       ]
     },
@@ -559,6 +540,25 @@
       ]
     },
     {
+      "id": "0x6d58897f1b350b476cdc5875a369c2e9a9fc4ef5f9d352891524dd2c2dbc6600",
+      "title": "Bayer 04 Leverkusen vs. FC Bayern München",
+      "slug": "dfb-lev-bay-2026-04-22",
+      "outcomes": [
+        {
+          "token_id": "63888526046514605803615002067918602247356995930306784011902340367901648243732",
+          "name": "Bayer 04 Leverkusen"
+        },
+        {
+          "token_id": "6170346719908147110080807007934416120176745445280586340011178144970571564929",
+          "name": "Draw (Bayer 04 Leverkusen vs. FC Bayern München)"
+        },
+        {
+          "token_id": "35879996198851431520546795659568541378604745056754922753450140925125312230308",
+          "name": "FC Bayern München"
+        }
+      ]
+    },
+    {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
       "title": "Fed decision in April?",
       "slug": "fed-decision-in-april",
@@ -789,6 +789,25 @@
       ]
     },
     {
+      "id": "0xc57f7f65ab3ca4f246ab4be3f82f39ebf7412e3bb098aaae0836725fd1ae4e00",
+      "title": "FC Barcelona vs. RC Celta de Vigo",
+      "slug": "lal-bar-cel-2026-04-22",
+      "outcomes": [
+        {
+          "token_id": "6414910570154344493926686441986701647094418157466709066406597031504284340622",
+          "name": "FC Barcelona"
+        },
+        {
+          "token_id": "10660644123286634141715585678016106875972805371909404412260425002659222044623",
+          "name": "Draw (FC Barcelona vs. RC Celta de Vigo)"
+        },
+        {
+          "token_id": "55463439421112654622088608919383609804751238414518862939578160069095276780681",
+          "name": "RC Celta de Vigo"
+        }
+      ]
+    },
+    {
       "id": "0xadb7e58e8bc49f689db034724fc75b1dff8ca055bba20d5a883853227974d200",
       "title": "Peru Presidential Election Winner",
       "slug": "peru-presidential-election-winner",
@@ -1007,25 +1026,6 @@
         {
           "token_id": "49865209026284154730838919013206671020825469735154984501725817061904924001125",
           "name": "Leeds United FC"
-        }
-      ]
-    },
-    {
-      "id": "0x9f8cb6180d7125f1f6322b2e4895c1a485c66697a7f82d79a939f65f8f5cb000",
-      "title": "Burnley FC vs. Manchester City FC",
-      "slug": "epl-bur-mac-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "59692434592208739666285550405487746316516302668571845846467534644022046841809",
-          "name": "Burnley FC"
-        },
-        {
-          "token_id": "106262165344118246752266816435575145075018837109886663293292434438230820269205",
-          "name": "Draw (Burnley FC vs. Manchester City FC)"
-        },
-        {
-          "token_id": "13656401800622592991785509184845561764238446065415736337519393290690221400064",
-          "name": "Manchester City FC"
         }
       ]
     }
