@@ -1,25 +1,6 @@
 {
-  "generated_at": "2026-04-22T22:34:01.928429+00:00",
+  "generated_at": "2026-04-22T23:34:15.760286+00:00",
   "events": [
-    {
-      "id": "0xfd3d474081b305a87c75e1249c29af21f16f310947574a1c3a534fd2a8add700",
-      "title": "Elche CF vs. Club Atlético de Madrid",
-      "slug": "lal-elc-mad-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "27699975533257772650988656130248825800994308474672207734484532869620302037655",
-          "name": "Elche CF"
-        },
-        {
-          "token_id": "71012923583613519054673641953216554691154404779841416210260395650676790514431",
-          "name": "Draw (Elche CF vs. Club Atlético de Madrid)"
-        },
-        {
-          "token_id": "17684283368478579011485556298092659675294671893414587403391837552748491189817",
-          "name": "Club Atlético de Madrid"
-        }
-      ]
-    },
     {
       "id": "0x2c3d7e0eee6f058be3006baabf0d54a07da254ba47fe6e3e095e7990c7814700",
       "title": "Democratic Presidential Nominee 2028",
@@ -540,25 +521,6 @@
       ]
     },
     {
-      "id": "0x6d58897f1b350b476cdc5875a369c2e9a9fc4ef5f9d352891524dd2c2dbc6600",
-      "title": "Bayer 04 Leverkusen vs. FC Bayern München",
-      "slug": "dfb-lev-bay-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "63888526046514605803615002067918602247356995930306784011902340367901648243732",
-          "name": "Bayer 04 Leverkusen"
-        },
-        {
-          "token_id": "6170346719908147110080807007934416120176745445280586340011178144970571564929",
-          "name": "Draw (Bayer 04 Leverkusen vs. FC Bayern München)"
-        },
-        {
-          "token_id": "35879996198851431520546795659568541378604745056754922753450140925125312230308",
-          "name": "FC Bayern München"
-        }
-      ]
-    },
-    {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
       "title": "Fed decision in April?",
       "slug": "fed-decision-in-april",
@@ -578,6 +540,25 @@
         {
           "token_id": "9556122149160720922715284597610520228366807023831966638741974320131898296289",
           "name": "25+ bps increase"
+        }
+      ]
+    },
+    {
+      "id": "0xc57f7f65ab3ca4f246ab4be3f82f39ebf7412e3bb098aaae0836725fd1ae4e00",
+      "title": "FC Barcelona vs. RC Celta de Vigo",
+      "slug": "lal-bar-cel-2026-04-22",
+      "outcomes": [
+        {
+          "token_id": "6414910570154344493926686441986701647094418157466709066406597031504284340622",
+          "name": "FC Barcelona"
+        },
+        {
+          "token_id": "10660644123286634141715585678016106875972805371909404412260425002659222044623",
+          "name": "Draw (FC Barcelona vs. RC Celta de Vigo)"
+        },
+        {
+          "token_id": "55463439421112654622088608919383609804751238414518862939578160069095276780681",
+          "name": "RC Celta de Vigo"
         }
       ]
     },
@@ -789,25 +770,6 @@
       ]
     },
     {
-      "id": "0xc57f7f65ab3ca4f246ab4be3f82f39ebf7412e3bb098aaae0836725fd1ae4e00",
-      "title": "FC Barcelona vs. RC Celta de Vigo",
-      "slug": "lal-bar-cel-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "6414910570154344493926686441986701647094418157466709066406597031504284340622",
-          "name": "FC Barcelona"
-        },
-        {
-          "token_id": "10660644123286634141715585678016106875972805371909404412260425002659222044623",
-          "name": "Draw (FC Barcelona vs. RC Celta de Vigo)"
-        },
-        {
-          "token_id": "55463439421112654622088608919383609804751238414518862939578160069095276780681",
-          "name": "RC Celta de Vigo"
-        }
-      ]
-    },
-    {
       "id": "0xadb7e58e8bc49f689db034724fc75b1dff8ca055bba20d5a883853227974d200",
       "title": "Peru Presidential Election Winner",
       "slug": "peru-presidential-election-winner",
@@ -1007,25 +969,6 @@
         {
           "token_id": "104684177361879293772451967369395447852198309451265624296636331715537531335257",
           "name": "Candidate O"
-        }
-      ]
-    },
-    {
-      "id": "0x030679321c8f0dd80d972c15c9fb9eaae477ba326d426e5d6530b85911dea700",
-      "title": "AFC Bournemouth vs. Leeds United FC",
-      "slug": "epl-bou-lee-2026-04-22",
-      "outcomes": [
-        {
-          "token_id": "54840920599237320262677994264145087837352463836950714130750790975476640612362",
-          "name": "AFC Bournemouth"
-        },
-        {
-          "token_id": "91326196293927618208474925980392911976604390760542106327328942016613597627065",
-          "name": "Draw (AFC Bournemouth vs. Leeds United FC)"
-        },
-        {
-          "token_id": "49865209026284154730838919013206671020825469735154984501725817061904924001125",
-          "name": "Leeds United FC"
         }
       ]
     }
