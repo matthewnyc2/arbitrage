@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-24T20:31:50.626331+00:00",
+  "generated_at": "2026-04-24T21:34:24.350732+00:00",
   "events": [
     {
       "id": "0xbb9f899d43a2d422584de79222f5332a394d95e36350e0e32dbf90acb7ffb900",
@@ -703,6 +703,25 @@
       ]
     },
     {
+      "id": "0x249221b01e426e37ef85ae2810b59725d4e8184db042edd9cbd0eac72a734f00",
+      "title": "Real Betis Balompié vs. Real Madrid CF",
+      "slug": "lal-bet-rea-2026-04-24",
+      "outcomes": [
+        {
+          "token_id": "10116542881711620880986561304107261137252190563104283971002832193553740455098",
+          "name": "Real Betis Balompié"
+        },
+        {
+          "token_id": "84690742656439997307364577257361996103663258049770087475020331339002490858309",
+          "name": "Draw (Real Betis Balompié vs. Real Madrid CF)"
+        },
+        {
+          "token_id": "1025166382000609751009726938143922559179829173906940972697092796893369839377",
+          "name": "Real Madrid CF"
+        }
+      ]
+    },
+    {
       "id": "0xf8c3355e4a1a8dde1b33b78e2d41b769a420333bf83761762a5b0d6bfdecc900",
       "title": "Who will be confirmed as Fed Chair?",
       "slug": "who-will-be-confirmed-as-fed-chair",
@@ -846,25 +865,6 @@
         {
           "token_id": "104807184979803759394326910316480341535652871214511487804916793385164586605845",
           "name": "Rick Reider"
-        }
-      ]
-    },
-    {
-      "id": "0x249221b01e426e37ef85ae2810b59725d4e8184db042edd9cbd0eac72a734f00",
-      "title": "Real Betis Balompié vs. Real Madrid CF",
-      "slug": "lal-bet-rea-2026-04-24",
-      "outcomes": [
-        {
-          "token_id": "10116542881711620880986561304107261137252190563104283971002832193553740455098",
-          "name": "Real Betis Balompié"
-        },
-        {
-          "token_id": "84690742656439997307364577257361996103663258049770087475020331339002490858309",
-          "name": "Draw (Real Betis Balompié vs. Real Madrid CF)"
-        },
-        {
-          "token_id": "1025166382000609751009726938143922559179829173906940972697092796893369839377",
-          "name": "Real Madrid CF"
         }
       ]
     },
