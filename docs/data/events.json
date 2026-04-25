@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-25T19:34:14.531928+00:00",
+  "generated_at": "2026-04-25T20:29:55.143241+00:00",
   "events": [
     {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
@@ -44,21 +44,21 @@
       ]
     },
     {
-      "id": "0xb830af2d67992cc5a00413646ac85e0ef5ee2980d97d0cf7f044b46f40d69a00",
-      "title": "Getafe CF vs. FC Barcelona",
-      "slug": "lal-get-bar-2026-04-25",
+      "id": "0x4a988370f74fae221e5dfd27ed58707c531647fde9e2292363e1de1628a23f00",
+      "title": "Club Atlético de Madrid vs. Athletic Club",
+      "slug": "lal-mad-bil-2026-04-25",
       "outcomes": [
         {
-          "token_id": "18848281688923085309359715209462130821502103760711565914105587208568894394915",
-          "name": "Getafe CF"
+          "token_id": "81158099902982127767655382821085776846834135588627211437287604861607234240992",
+          "name": "Club Atlético de Madrid"
         },
         {
-          "token_id": "11373540971042538128639713608189342552171664066272904466843495766405705201494",
-          "name": "Draw (Getafe CF vs. FC Barcelona)"
+          "token_id": "47787092358286290477393809273537833213104252697223869070671274764292589823121",
+          "name": "Draw (Club Atlético de Madrid vs. Athletic Club)"
         },
         {
-          "token_id": "64644103675962735734915542593453398540999981532055072408863345848993282346075",
-          "name": "FC Barcelona"
+          "token_id": "47126558604802673189021070795146164598835305070509536484559554655973329914545",
+          "name": "Athletic Club"
         }
       ]
     },
@@ -582,25 +582,6 @@
       ]
     },
     {
-      "id": "0x4a988370f74fae221e5dfd27ed58707c531647fde9e2292363e1de1628a23f00",
-      "title": "Club Atlético de Madrid vs. Athletic Club",
-      "slug": "lal-mad-bil-2026-04-25",
-      "outcomes": [
-        {
-          "token_id": "81158099902982127767655382821085776846834135588627211437287604861607234240992",
-          "name": "Club Atlético de Madrid"
-        },
-        {
-          "token_id": "47787092358286290477393809273537833213104252697223869070671274764292589823121",
-          "name": "Draw (Club Atlético de Madrid vs. Athletic Club)"
-        },
-        {
-          "token_id": "47126558604802673189021070795146164598835305070509536484559554655973329914545",
-          "name": "Athletic Club"
-        }
-      ]
-    },
-    {
       "id": "0x9e6393193300227651b95216af487f412913803e04bb96140ab65ef189078b00",
       "title": "Angers SCO vs. Paris Saint-Germain FC",
       "slug": "fl1-ang-psg-2026-04-25",
@@ -616,25 +597,6 @@
         {
           "token_id": "111926477559367798296728004619733177361637555152305068772770596179825109422054",
           "name": "Paris Saint-Germain FC"
-        }
-      ]
-    },
-    {
-      "id": "0x7f2b0d98e33cd1a6667d08a72e45beb52b5de88d251bfd1fcc8b189192694100",
-      "title": "Wolverhampton Wanderers FC vs. Tottenham Hotspur FC",
-      "slug": "epl-wol-tot-2026-04-25",
-      "outcomes": [
-        {
-          "token_id": "28588618246743876089623021725172636347995178705979527605828185273149927960467",
-          "name": "Wolverhampton Wanderers FC"
-        },
-        {
-          "token_id": "111563533700646051680692121475963283500612405113746994969734135767593514748935",
-          "name": "Draw (Wolverhampton Wanderers FC vs. Tottenham Hotspur FC)"
-        },
-        {
-          "token_id": "54125107892545123841204333440511821829064165907868033990466794896038356063851",
-          "name": "Tottenham Hotspur FC"
         }
       ]
     },
