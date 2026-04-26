@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-26T16:30:19.966353+00:00",
+  "generated_at": "2026-04-26T17:30:14.246700+00:00",
   "events": [
     {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
@@ -218,25 +218,6 @@
         {
           "token_id": "6833344408844073547977989494059827105519993366105625066517798952479374663126",
           "name": "Draw (VfB Stuttgart vs. SV Werder Bremen)"
-        }
-      ]
-    },
-    {
-      "id": "0x6382f1ba5118ebb396a688cca7f74f55154766728e64d4ffd80d6a4e95bffa00",
-      "title": "FC Lorient vs. RC Strasbourg Alsace",
-      "slug": "fl1-lor-str-2026-04-26",
-      "outcomes": [
-        {
-          "token_id": "40202049323533774022172585837374141482004177431386662259934922365407657972804",
-          "name": "FC Lorient"
-        },
-        {
-          "token_id": "107220870595105857657056666058163498019291648168778895864286335058145438122354",
-          "name": "Draw (FC Lorient vs. RC Strasbourg Alsace)"
-        },
-        {
-          "token_id": "106273952873300273133568092946190883007560904190034586205105156052712618444948",
-          "name": "RC Strasbourg Alsace"
         }
       ]
     },
