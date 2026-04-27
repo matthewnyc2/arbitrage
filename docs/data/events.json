@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-27T18:45:44.389342+00:00",
+  "generated_at": "2026-04-27T19:49:30.468087+00:00",
   "events": [
     {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
@@ -1270,6 +1270,25 @@
       ]
     },
     {
+      "id": "0xad1b680de83be5ffcf38a1de87ae4ee2ce7a7482341594b6123c0570b4a3d100",
+      "title": "Manchester United FC vs. Brentford FC",
+      "slug": "epl-mun-bre-2026-04-27",
+      "outcomes": [
+        {
+          "token_id": "91688002294852517700175509342481171443541760257723064867737718477628369265588",
+          "name": "Manchester United FC"
+        },
+        {
+          "token_id": "61170652800029770720244452530272407583650573530114454703559815155806125364260",
+          "name": "Draw (Manchester United FC vs. Brentford FC)"
+        },
+        {
+          "token_id": "83265131228122490111661353830482950952190904199068915435289189600322828749782",
+          "name": "Brentford FC"
+        }
+      ]
+    },
+    {
       "id": "0x2e8ee0b78c06349677514c81455c1256e07e0b2cf4c9cde23fd23f65eda05200",
       "title": "F1 Drivers' Champion",
       "slug": "2026-f1-drivers-champion",
@@ -1405,21 +1424,21 @@
       ]
     },
     {
-      "id": "0xad1b680de83be5ffcf38a1de87ae4ee2ce7a7482341594b6123c0570b4a3d100",
-      "title": "Manchester United FC vs. Brentford FC",
-      "slug": "epl-mun-bre-2026-04-27",
+      "id": "0xfb26da2228d14b0b2b291b7c34d869e7809374aff7ce7d045512816889c8ac00",
+      "title": "Cagliari Calcio vs. Atalanta BC",
+      "slug": "sea-cag-ata-2026-04-27",
       "outcomes": [
         {
-          "token_id": "91688002294852517700175509342481171443541760257723064867737718477628369265588",
-          "name": "Manchester United FC"
+          "token_id": "89203734763677295142948199903914030754706289876049569176107240652504981471703",
+          "name": "Cagliari Calcio"
         },
         {
-          "token_id": "61170652800029770720244452530272407583650573530114454703559815155806125364260",
-          "name": "Draw (Manchester United FC vs. Brentford FC)"
+          "token_id": "64799823666658342509026604702079620329965501792682955797139626159144001174094",
+          "name": "Draw (Cagliari Calcio vs. Atalanta BC)"
         },
         {
-          "token_id": "83265131228122490111661353830482950952190904199068915435289189600322828749782",
-          "name": "Brentford FC"
+          "token_id": "77149712586028583839155004243819646080101023132724180313652773852229517753420",
+          "name": "Atalanta BC"
         }
       ]
     }
