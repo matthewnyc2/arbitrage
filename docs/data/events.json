@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-28T10:59:42.212285+00:00",
+  "generated_at": "2026-04-28T11:56:05.296684+00:00",
   "events": [
     {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
@@ -679,6 +679,25 @@
       ]
     },
     {
+      "id": "0xbd2b7f7931b81b186275dd91a2f8182ee0115b0b3937757f2396da28594f1400",
+      "title": "Paris Saint-Germain FC vs. FC Bayern München",
+      "slug": "ucl-psg1-bay1-2026-04-28",
+      "outcomes": [
+        {
+          "token_id": "56298843173176165286659806487260545841523516277139567496842895494478628197975",
+          "name": "Paris Saint-Germain FC"
+        },
+        {
+          "token_id": "36371571444134481166552404550536429128696778658073601221281708002065942583810",
+          "name": "Draw (Paris Saint-Germain FC vs. FC Bayern München)"
+        },
+        {
+          "token_id": "70443776978586166753037904611704382838530291548585914657027146388292373987088",
+          "name": "FC Bayern München"
+        }
+      ]
+    },
+    {
       "id": "0xca3e6d866434291855e71f79828e2d622bd54f14c739155acee7a80a8f278b00",
       "title": "Eurovision Winner 2026",
       "slug": "eurovision-winner-2026",
@@ -882,25 +901,6 @@
         {
           "token_id": "71245524396453249176034132894900283637701784777359043305381041387868901088628",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0xbd2b7f7931b81b186275dd91a2f8182ee0115b0b3937757f2396da28594f1400",
-      "title": "Paris Saint-Germain FC vs. FC Bayern München",
-      "slug": "ucl-psg1-bay1-2026-04-28",
-      "outcomes": [
-        {
-          "token_id": "56298843173176165286659806487260545841523516277139567496842895494478628197975",
-          "name": "Paris Saint-Germain FC"
-        },
-        {
-          "token_id": "36371571444134481166552404550536429128696778658073601221281708002065942583810",
-          "name": "Draw (Paris Saint-Germain FC vs. FC Bayern München)"
-        },
-        {
-          "token_id": "70443776978586166753037904611704382838530291548585914657027146388292373987088",
-          "name": "FC Bayern München"
         }
       ]
     },
