@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-29T11:53:17.217575+00:00",
+  "generated_at": "2026-04-29T12:52:39.745440+00:00",
   "events": [
     {
       "id": "0xec7bbee74fbfb5eea9f853295f793575a4e5e7bad06501ba880c423d6497b100",
@@ -691,6 +691,25 @@
       ]
     },
     {
+      "id": "0x9d6e0a1f8f0efff769590a7ad074a144556afe65d62bfcfb6d72651b9050e200",
+      "title": "Club Atlético de Madrid vs. Arsenal FC",
+      "slug": "ucl-atm1-ars-2026-04-29",
+      "outcomes": [
+        {
+          "token_id": "32326926202698861178534048664543386299881683923805840129931641669659111262332",
+          "name": "Draw (Club Atlético de Madrid vs. Arsenal FC)"
+        },
+        {
+          "token_id": "105509530658065521929005822649620491538474208103684744366955937109627519057368",
+          "name": "Arsenal FC"
+        },
+        {
+          "token_id": "5402670567066751822273946599754875950735802364303000292656953516212515976521",
+          "name": "Club Atlético de Madrid"
+        }
+      ]
+    },
+    {
       "id": "0x2e8ee0b78c06349677514c81455c1256e07e0b2cf4c9cde23fd23f65eda05200",
       "title": "F1 Drivers' Champion",
       "slug": "2026-f1-drivers-champion",
@@ -1029,25 +1048,6 @@
         {
           "token_id": "71245524396453249176034132894900283637701784777359043305381041387868901088628",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0x9d6e0a1f8f0efff769590a7ad074a144556afe65d62bfcfb6d72651b9050e200",
-      "title": "Club Atlético de Madrid vs. Arsenal FC",
-      "slug": "ucl-atm1-ars-2026-04-29",
-      "outcomes": [
-        {
-          "token_id": "32326926202698861178534048664543386299881683923805840129931641669659111262332",
-          "name": "Draw (Club Atlético de Madrid vs. Arsenal FC)"
-        },
-        {
-          "token_id": "105509530658065521929005822649620491538474208103684744366955937109627519057368",
-          "name": "Arsenal FC"
-        },
-        {
-          "token_id": "5402670567066751822273946599754875950735802364303000292656953516212515976521",
-          "name": "Club Atlético de Madrid"
         }
       ]
     },
