@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-07T17:55:50.607068+00:00",
+  "generated_at": "2026-05-07T18:54:46.694791+00:00",
   "events": [
     {
       "id": "0x223d79df81338c2c00e4c10a48736cee5aa3f66a3b25c5f740b54fc812178500",
@@ -109,6 +109,25 @@
         {
           "token_id": "73699684286748467001686904908449574306047879441929036427403546945973088001196",
           "name": "Person O"
+        }
+      ]
+    },
+    {
+      "id": "0x1c0d1a6ca194ea775990a1c216c356dcb4960ed8c5cb107ae2677fd0c62a3c00",
+      "title": "RC Strasbourg Alsace vs. Rayo Vallecano de Madrid",
+      "slug": "col-str-ray-2026-05-07",
+      "outcomes": [
+        {
+          "token_id": "80353163166779155702849225386540660631582848663867592546663430403729921532764",
+          "name": "RC Strasbourg Alsace"
+        },
+        {
+          "token_id": "52510710307000182493679446353891549483569619178018720204294958659094356962663",
+          "name": "Draw (RC Strasbourg Alsace vs. Rayo Vallecano de Madrid)"
+        },
+        {
+          "token_id": "49385442326978269572087721737625962022462063228354390626637020240261330868600",
+          "name": "Rayo Vallecano de Madrid"
         }
       ]
     },
