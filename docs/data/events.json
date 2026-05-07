@@ -1,25 +1,6 @@
 {
-  "generated_at": "2026-05-07T22:39:46.029788+00:00",
+  "generated_at": "2026-05-07T23:35:37.736442+00:00",
   "events": [
-    {
-      "id": "0x1c0d1a6ca194ea775990a1c216c356dcb4960ed8c5cb107ae2677fd0c62a3c00",
-      "title": "RC Strasbourg Alsace vs. Rayo Vallecano de Madrid",
-      "slug": "col-str-ray-2026-05-07",
-      "outcomes": [
-        {
-          "token_id": "80353163166779155702849225386540660631582848663867592546663430403729921532764",
-          "name": "RC Strasbourg Alsace"
-        },
-        {
-          "token_id": "52510710307000182493679446353891549483569619178018720204294958659094356962663",
-          "name": "Draw (RC Strasbourg Alsace vs. Rayo Vallecano de Madrid)"
-        },
-        {
-          "token_id": "49385442326978269572087721737625962022462063228354390626637020240261330868600",
-          "name": "Rayo Vallecano de Madrid"
-        }
-      ]
-    },
     {
       "id": "0x223d79df81338c2c00e4c10a48736cee5aa3f66a3b25c5f740b54fc812178500",
       "title": "Next Prime Minister of Hungary",
@@ -335,25 +316,6 @@
         {
           "token_id": "71245524396453249176034132894900283637701784777359043305381041387868901088628",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0x3cedb1e25186da36fbf2871255b635fa98c0f30dce0b9e505870641013909100",
-      "title": "Aston Villa FC vs. Nottingham Forest FC",
-      "slug": "uel-ast4-not-2026-05-07",
-      "outcomes": [
-        {
-          "token_id": "101771262813691786271451305963599311891741782755554015056322802762788048258430",
-          "name": "Aston Villa FC"
-        },
-        {
-          "token_id": "61739957295920667562448378855894740688615505778607475518199921350238156361336",
-          "name": "Draw (Aston Villa FC vs. Nottingham Forest FC)"
-        },
-        {
-          "token_id": "20646566626109012883403033984082949414237946778690433651860073663336290675527",
-          "name": "Nottingham Forest FC"
         }
       ]
     },
