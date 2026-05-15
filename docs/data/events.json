@@ -1,25 +1,6 @@
 {
-  "generated_at": "2026-05-15T21:38:32.275928+00:00",
+  "generated_at": "2026-05-15T22:36:44.674011+00:00",
   "events": [
-    {
-      "id": "0x11992b61d7bca53ab95105839dd72d580784b5cee1b8d1581266a03d05811a00",
-      "title": "Aston Villa FC vs. Liverpool FC",
-      "slug": "epl-ast-liv-2026-05-17",
-      "outcomes": [
-        {
-          "token_id": "1595188389908704964590039616142867212219844488729598204584625804900479567316",
-          "name": "Aston Villa FC"
-        },
-        {
-          "token_id": "102731792147754191791581748962902649790876406689898149893143973330644479141435",
-          "name": "Draw (Aston Villa FC vs. Liverpool FC)"
-        },
-        {
-          "token_id": "24927956290195518297614243093112954558170251873920589555630586413804578416274",
-          "name": "Liverpool FC"
-        }
-      ]
-    },
     {
       "id": "0xa8a8ccaceb3e11706b62f5bb6a040665c1ebc14312abcf7430c7114095406a00",
       "title": "Fed Decision in June?",
