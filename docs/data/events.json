@@ -1,44 +1,6 @@
 {
-  "generated_at": "2026-05-16T18:38:02.415774+00:00",
+  "generated_at": "2026-05-16T19:41:21.634081+00:00",
   "events": [
-    {
-      "id": "0xec441e6bcbc60043910e6367f00e330090f456c1ce9d9c7deb2d01b409097700",
-      "title": "Chelsea FC vs. Manchester City FC",
-      "slug": "efa-cfc-mnc-2026-05-16",
-      "outcomes": [
-        {
-          "token_id": "13173749711260803523417508787963404200835971243737280705002113604954098702612",
-          "name": "Chelsea FC"
-        },
-        {
-          "token_id": "104429669532223162377811667681503834531005803641571692552692482191580145185490",
-          "name": "Draw (Chelsea FC vs. Manchester City FC)"
-        },
-        {
-          "token_id": "4252871261301863128731369056725053384530270232505191588908294054319555424411",
-          "name": "Manchester City FC"
-        }
-      ]
-    },
-    {
-      "id": "0xf9b37974bd434dbdb70b2bbe651a7fa28a637290d0fe201ccb375b98cabe1900",
-      "title": "Eintracht Frankfurt vs. VfB Stuttgart",
-      "slug": "bun-ein-stu-2026-05-16",
-      "outcomes": [
-        {
-          "token_id": "95237151524644568098976868543041142578917047717673971242732997791277581187658",
-          "name": "Eintracht Frankfurt"
-        },
-        {
-          "token_id": "42469409610768783380918551271655491186944633746724315260037259830663387161679",
-          "name": "Draw (Eintracht Frankfurt vs. VfB Stuttgart)"
-        },
-        {
-          "token_id": "60288272810361499025217465573628996058988494762690360827820892015857862477038",
-          "name": "VfB Stuttgart"
-        }
-      ]
-    },
     {
       "id": "0xa8a8ccaceb3e11706b62f5bb6a040665c1ebc14312abcf7430c7114095406a00",
       "title": "Fed Decision in June?",
