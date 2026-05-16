@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-16T17:37:39.414525+00:00",
+  "generated_at": "2026-05-16T18:38:02.415774+00:00",
   "events": [
     {
       "id": "0xec441e6bcbc60043910e6367f00e330090f456c1ce9d9c7deb2d01b409097700",
@@ -21,25 +21,6 @@
       ]
     },
     {
-      "id": "0x0c7fc5f5dc455ac0aa2501aca15f0fb1d43793b7e7cac5e8e31223a37b9d7d00",
-      "title": "1. FC Heidenheim 1846 vs. 1. FSV Mainz 05",
-      "slug": "bun-hei-mai-2026-05-16",
-      "outcomes": [
-        {
-          "token_id": "112248517236378947914160619495048770606688516460197752735220157173231484575913",
-          "name": "1. FC Heidenheim 1846"
-        },
-        {
-          "token_id": "2887576736792150719620145190039972862730028888793644857119554200251089122912",
-          "name": "Draw (1. FC Heidenheim 1846 vs. 1. FSV Mainz 05)"
-        },
-        {
-          "token_id": "53017970864118151304331495761380215513093021699856550368924790018570796656630",
-          "name": "1. FSV Mainz 05"
-        }
-      ]
-    },
-    {
       "id": "0xf9b37974bd434dbdb70b2bbe651a7fa28a637290d0fe201ccb375b98cabe1900",
       "title": "Eintracht Frankfurt vs. VfB Stuttgart",
       "slug": "bun-ein-stu-2026-05-16",
@@ -55,25 +36,6 @@
         {
           "token_id": "60288272810361499025217465573628996058988494762690360827820892015857862477038",
           "name": "VfB Stuttgart"
-        }
-      ]
-    },
-    {
-      "id": "0x7619269e07bbb96544a3cabc3df85a7210712b4911336d5add93f3167acc6100",
-      "title": "Borussia Mönchengladbach vs. TSG 1899 Hoffenheim",
-      "slug": "bun-moe-hof-2026-05-16",
-      "outcomes": [
-        {
-          "token_id": "111348645717742790595998979290986075417614688616777323922479394950073702377169",
-          "name": "Borussia Mönchengladbach"
-        },
-        {
-          "token_id": "57347599717804301753666302718930709622466855136449573897199511316661981567517",
-          "name": "Draw (Borussia Mönchengladbach vs. TSG 1899 Hoffenheim)"
-        },
-        {
-          "token_id": "104964284259348000427532482336079006296641146135408293505239020111304516793756",
-          "name": "TSG 1899 Hoffenheim"
         }
       ]
     },
