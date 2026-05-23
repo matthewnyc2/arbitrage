@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23T22:36:32.383218+00:00",
+  "generated_at": "2026-05-23T23:38:11.097878+00:00",
   "events": [
     {
       "id": "0xf77085f26141992f771ba2bd8b3f962c5fc18900f67764ce88cb2db9ac5b1900",
@@ -699,25 +699,6 @@
         {
           "token_id": "47283709292818159981092214523559721147807560945403058940532915962307613022941",
           "name": "Person BQ"
-        }
-      ]
-    },
-    {
-      "id": "0x7230b35a7f0849cf1c421c7063ce7faf6cd1412bc3b7fd641de92f4756e59b00",
-      "title": "RCD Espanyol de Barcelona vs. Real Sociedad de Fútbol",
-      "slug": "lal-esp-rso-2026-05-23",
-      "outcomes": [
-        {
-          "token_id": "29032223402328223540719765536798301257654931085928764723290617185831281007536",
-          "name": "RCD Espanyol de Barcelona"
-        },
-        {
-          "token_id": "38537534574918512384336062512490132567406110087963497060510472031860900470639",
-          "name": "Draw (RCD Espanyol de Barcelona vs. Real Sociedad de Fútbol)"
-        },
-        {
-          "token_id": "50970148733996387078396915453019411080920924700064074833232749565617883572356",
-          "name": "Real Sociedad de Fútbol"
         }
       ]
     }
