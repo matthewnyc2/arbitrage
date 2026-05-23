@@ -1,25 +1,6 @@
 {
-  "generated_at": "2026-05-23T18:38:59.919519+00:00",
+  "generated_at": "2026-05-23T19:43:17.589200+00:00",
   "events": [
-    {
-      "id": "0xa7fbf8f0fe14acf006c9bf24bce213b2f3ed54420e2fe55d4026bae6b3f0aa00",
-      "title": "Bologna FC 1909 vs. FC Internazionale Milano",
-      "slug": "sea-bol-int-2026-05-24",
-      "outcomes": [
-        {
-          "token_id": "110643393820103466491254693223946374657407798442665690913603927414026297487001",
-          "name": "Bologna FC 1909"
-        },
-        {
-          "token_id": "5404114981763076464153909643890313509489840998386922659780807328251087563811",
-          "name": "Draw (Bologna FC 1909 vs. FC Internazionale Milano)"
-        },
-        {
-          "token_id": "66082363086129436758717356734409386098434296298245994554723904267522414056476",
-          "name": "FC Internazionale Milano"
-        }
-      ]
-    },
     {
       "id": "0x9ae19695bf2bb303f130e404195cfa367ae41317d6a9ae1ac858a73ab4170e00",
       "title": "Dublin-Central By-Election Winner",
@@ -199,6 +180,44 @@
         {
           "token_id": "92329765487207584727101018977799190433790866232634965234242001354435203572256",
           "name": "VfB Stuttgart"
+        }
+      ]
+    },
+    {
+      "id": "0x7230b35a7f0849cf1c421c7063ce7faf6cd1412bc3b7fd641de92f4756e59b00",
+      "title": "RCD Espanyol de Barcelona vs. Real Sociedad de Fútbol",
+      "slug": "lal-esp-rso-2026-05-23",
+      "outcomes": [
+        {
+          "token_id": "29032223402328223540719765536798301257654931085928764723290617185831281007536",
+          "name": "RCD Espanyol de Barcelona"
+        },
+        {
+          "token_id": "38537534574918512384336062512490132567406110087963497060510472031860900470639",
+          "name": "Draw (RCD Espanyol de Barcelona vs. Real Sociedad de Fútbol)"
+        },
+        {
+          "token_id": "50970148733996387078396915453019411080920924700064074833232749565617883572356",
+          "name": "Real Sociedad de Fútbol"
+        }
+      ]
+    },
+    {
+      "id": "0x8a1c4cf1f40432df6434e2bfd913d15623831681c2e0a60c2a0200fe194f9900",
+      "title": "Real Madrid CF vs. Athletic Club",
+      "slug": "lal-rea-bil-2026-05-23",
+      "outcomes": [
+        {
+          "token_id": "49556201004349741510324670643689995164638124902706378695810430779095502106427",
+          "name": "Real Madrid CF"
+        },
+        {
+          "token_id": "114048386114973598486694006205552070702444108318506031985569689340149550948719",
+          "name": "Draw (Real Madrid CF vs. Athletic Club)"
+        },
+        {
+          "token_id": "15925220734048585836422109132017826416008338827784769537341227446057621390634",
+          "name": "Athletic Club"
         }
       ]
     },
@@ -718,6 +737,25 @@
         {
           "token_id": "47283709292818159981092214523559721147807560945403058940532915962307613022941",
           "name": "Person BQ"
+        }
+      ]
+    },
+    {
+      "id": "0xf6dc1b85a13c7f69a188f6d30baccc0da8ced74394e5d66ff839f72ed0350400",
+      "title": "Getafe CF vs. CA Osasuna",
+      "slug": "lal-get-osa-2026-05-23",
+      "outcomes": [
+        {
+          "token_id": "77158119013514673072256980983619451260664638508270611917223501854794945698538",
+          "name": "Getafe CF"
+        },
+        {
+          "token_id": "95648155412668523976594769911484799410624329820802735293687039154778522754093",
+          "name": "Draw (Getafe CF vs. CA Osasuna)"
+        },
+        {
+          "token_id": "85726914434344600450247873694370080027438692566906408194177365857789732475227",
+          "name": "CA Osasuna"
         }
       ]
     }
