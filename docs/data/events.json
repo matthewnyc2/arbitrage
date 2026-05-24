@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-24T20:35:24.131927+00:00",
+  "generated_at": "2026-05-24T21:37:26.500917+00:00",
   "events": [
     {
       "id": "0x2a2a87465c80932556058c4cc43a8213bb6d32444b7b7e4dabde62b35fd89a00",
@@ -540,6 +540,25 @@
       ]
     },
     {
+      "id": "0x15a0247af40d4fe52793d4582f1a668f37d50f83a9ffbe525c415c8eef37a200",
+      "title": "Hellas Verona FC vs. AS Roma",
+      "slug": "sea-ver-rom-2026-05-24",
+      "outcomes": [
+        {
+          "token_id": "26561833402356520422648458841144763057457668163600453454930868532652862439275",
+          "name": "Hellas Verona FC"
+        },
+        {
+          "token_id": "88727903055931608845042925379477476309330967869694816062320735648348824504346",
+          "name": "Draw (Hellas Verona FC vs. AS Roma)"
+        },
+        {
+          "token_id": "110550525947457513705334576487598385328097972778290612082751042735783849968351",
+          "name": "AS Roma"
+        }
+      ]
+    },
+    {
       "id": "0x2c3d7e0eee6f058be3006baabf0d54a07da254ba47fe6e3e095e7990c7814700",
       "title": "Democratic Presidential Nominee 2028",
       "slug": "democratic-presidential-nominee-2028",
@@ -1055,44 +1074,6 @@
         {
           "token_id": "47283709292818159981092214523559721147807560945403058940532915962307613022941",
           "name": "Person BQ"
-        }
-      ]
-    },
-    {
-      "id": "0x15a0247af40d4fe52793d4582f1a668f37d50f83a9ffbe525c415c8eef37a200",
-      "title": "Hellas Verona FC vs. AS Roma",
-      "slug": "sea-ver-rom-2026-05-24",
-      "outcomes": [
-        {
-          "token_id": "26561833402356520422648458841144763057457668163600453454930868532652862439275",
-          "name": "Hellas Verona FC"
-        },
-        {
-          "token_id": "88727903055931608845042925379477476309330967869694816062320735648348824504346",
-          "name": "Draw (Hellas Verona FC vs. AS Roma)"
-        },
-        {
-          "token_id": "110550525947457513705334576487598385328097972778290612082751042735783849968351",
-          "name": "AS Roma"
-        }
-      ]
-    },
-    {
-      "id": "0x981950391d1dd047f596cfecfbe043890c51ad9cdb59ca9afdee53a6ce73cb00",
-      "title": "AC Milan vs. Cagliari Calcio",
-      "slug": "sea-mil-cag-2026-05-24",
-      "outcomes": [
-        {
-          "token_id": "11729103645793387594911674887496028593878554453919356513415897227437967011101",
-          "name": "AC Milan"
-        },
-        {
-          "token_id": "88922726596075962105021646138568877345654330650450703582861694760559365588167",
-          "name": "Draw (AC Milan vs. Cagliari Calcio)"
-        },
-        {
-          "token_id": "34974531536785511944004129933415502446076816155629017699695675276031446100413",
-          "name": "Cagliari Calcio"
         }
       ]
     }
