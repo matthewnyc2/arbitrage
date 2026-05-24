@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-24T16:38:48.742839+00:00",
+  "generated_at": "2026-05-24T17:38:05.590717+00:00",
   "events": [
     {
       "id": "0x0db596f7b981758f9f9d624aa2e06dc5b6bc88d990ac1705e7a4e91203310600",
@@ -17,25 +17,6 @@
         {
           "token_id": "99006346120671631167136327377297129714037522127097286128418976895482339602957",
           "name": "Leeds United FC"
-        }
-      ]
-    },
-    {
-      "id": "0x3be08354f7059548b77e36144a762e9bff53030fa783462ae27afe1cfd419500",
-      "title": "Crystal Palace FC vs. Arsenal FC",
-      "slug": "epl-cry-ars-2026-05-24",
-      "outcomes": [
-        {
-          "token_id": "22905918011273506362028288487670792326868361185815774410025927360189297867747",
-          "name": "Crystal Palace FC"
-        },
-        {
-          "token_id": "4959606153169332424393061395247148691833629121178640440927798060082672290671",
-          "name": "Draw (Crystal Palace FC vs. Arsenal FC)"
-        },
-        {
-          "token_id": "105205367319912766756211155071759105081171661504364198483571345012161084474949",
-          "name": "Arsenal FC"
         }
       ]
     },
@@ -559,6 +540,25 @@
       ]
     },
     {
+      "id": "0x60e033fd33f36195fbbb22265e91319d6e991da5da8d2ed8c56f6eaa416e1300",
+      "title": "Manchester City FC vs. Aston Villa FC",
+      "slug": "epl-mac-ast-2026-05-24",
+      "outcomes": [
+        {
+          "token_id": "82661164042459078637558739281008134672167029606424600214675998292252076417026",
+          "name": "Manchester City FC"
+        },
+        {
+          "token_id": "42366385604666545199893299851591530491204692521306486678900757811926680638322",
+          "name": "Draw (Manchester City FC vs. Aston Villa FC)"
+        },
+        {
+          "token_id": "87151889839632641953979464627490393288555269574748942559253736660787795953059",
+          "name": "Aston Villa FC"
+        }
+      ]
+    },
+    {
       "id": "0x2c3d7e0eee6f058be3006baabf0d54a07da254ba47fe6e3e095e7990c7814700",
       "title": "Democratic Presidential Nominee 2028",
       "slug": "democratic-presidential-nominee-2028",
@@ -1078,6 +1078,25 @@
       ]
     },
     {
+      "id": "0x75f03bb7eb8f77bbbbe88b2d981267856be0cc204f705c75f3996cc029584200",
+      "title": "Liverpool FC vs. Brentford FC",
+      "slug": "epl-liv-bre-2026-05-24",
+      "outcomes": [
+        {
+          "token_id": "100802412482311950176831794268836517445142932463036659683561935538612212344064",
+          "name": "Liverpool FC"
+        },
+        {
+          "token_id": "23165677609776823684139786623430332496027293287337733733483408659826503734627",
+          "name": "Draw (Liverpool FC vs. Brentford FC)"
+        },
+        {
+          "token_id": "115596252964763128423131974236772187072429038694382855243633042687549739803205",
+          "name": "Brentford FC"
+        }
+      ]
+    },
+    {
       "id": "0x1f5b7ec72852786ed2f29feebc9f2156aceeb3c19e97f52423edb602af77f500",
       "title": "Sunderland AFC vs. Chelsea FC",
       "slug": "epl-sun-che-2026-05-24",
@@ -1097,40 +1116,21 @@
       ]
     },
     {
-      "id": "0x60e033fd33f36195fbbb22265e91319d6e991da5da8d2ed8c56f6eaa416e1300",
-      "title": "Manchester City FC vs. Aston Villa FC",
-      "slug": "epl-mac-ast-2026-05-24",
+      "id": "0x243b8a022b3ff9aebbdb961554be4dfcff32e7b6f68dc3540477208c9b4ae600",
+      "title": "Brighton & Hove Albion FC vs. Manchester United FC",
+      "slug": "epl-bri-mun-2026-05-24",
       "outcomes": [
         {
-          "token_id": "82661164042459078637558739281008134672167029606424600214675998292252076417026",
-          "name": "Manchester City FC"
+          "token_id": "25048143875635238679414290150421928196400621169463488604201022195036613744522",
+          "name": "Manchester United FC"
         },
         {
-          "token_id": "42366385604666545199893299851591530491204692521306486678900757811926680638322",
-          "name": "Draw (Manchester City FC vs. Aston Villa FC)"
+          "token_id": "112222736562939008410584081006409582612560334720901921784674057280566198013131",
+          "name": "Brighton & Hove Albion FC"
         },
         {
-          "token_id": "87151889839632641953979464627490393288555269574748942559253736660787795953059",
-          "name": "Aston Villa FC"
-        }
-      ]
-    },
-    {
-      "id": "0x75f03bb7eb8f77bbbbe88b2d981267856be0cc204f705c75f3996cc029584200",
-      "title": "Liverpool FC vs. Brentford FC",
-      "slug": "epl-liv-bre-2026-05-24",
-      "outcomes": [
-        {
-          "token_id": "100802412482311950176831794268836517445142932463036659683561935538612212344064",
-          "name": "Liverpool FC"
-        },
-        {
-          "token_id": "23165677609776823684139786623430332496027293287337733733483408659826503734627",
-          "name": "Draw (Liverpool FC vs. Brentford FC)"
-        },
-        {
-          "token_id": "115596252964763128423131974236772187072429038694382855243633042687549739803205",
-          "name": "Brentford FC"
+          "token_id": "37042658520507492901514464618343946190956894736132960625347409940384818512574",
+          "name": "Draw (Brighton & Hove Albion FC vs. Manchester United FC)"
         }
       ]
     }
