@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-24T23:38:59.254111+00:00",
+  "generated_at": "2026-05-25T01:22:13.425390+00:00",
   "events": [
     {
       "id": "0xb9aa4595bbe8ca1ecceeb16d24fb5df6d27d4e2116787ad874ff31f682bdb400",
@@ -521,25 +521,6 @@
       ]
     },
     {
-      "id": "0x15a0247af40d4fe52793d4582f1a668f37d50f83a9ffbe525c415c8eef37a200",
-      "title": "Hellas Verona FC vs. AS Roma",
-      "slug": "sea-ver-rom-2026-05-24",
-      "outcomes": [
-        {
-          "token_id": "26561833402356520422648458841144763057457668163600453454930868532652862439275",
-          "name": "Hellas Verona FC"
-        },
-        {
-          "token_id": "88727903055931608845042925379477476309330967869694816062320735648348824504346",
-          "name": "Draw (Hellas Verona FC vs. AS Roma)"
-        },
-        {
-          "token_id": "110550525947457513705334576487598385328097972778290612082751042735783849968351",
-          "name": "AS Roma"
-        }
-      ]
-    },
-    {
       "id": "0x2c3d7e0eee6f058be3006baabf0d54a07da254ba47fe6e3e095e7990c7814700",
       "title": "Democratic Presidential Nominee 2028",
       "slug": "democratic-presidential-nominee-2028",
@@ -1055,6 +1036,25 @@
         {
           "token_id": "47283709292818159981092214523559721147807560945403058940532915962307613022941",
           "name": "Person BQ"
+        }
+      ]
+    },
+    {
+      "id": "0x148cb36cd07d4c6ef0901f55578399b4318003fc71c761c447ab280e68b5ca00",
+      "title": "Inter Miami CF vs. Philadelphia Union",
+      "slug": "mls-mia-phi-2026-05-24",
+      "outcomes": [
+        {
+          "token_id": "64480284305933122900128659126216629196159222420007140486300253623710354724446",
+          "name": "Inter Miami CF"
+        },
+        {
+          "token_id": "50408716660043564806852122011738112623985503940458613973713474398241656412780",
+          "name": "Draw (Inter Miami CF vs. Philadelphia Union)"
+        },
+        {
+          "token_id": "89456863149213697194776808437357055569656383727293215820570957376975641984710",
+          "name": "Philadelphia Union"
         }
       ]
     }
