@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-27T19:05:41.986393+00:00",
+  "generated_at": "2026-05-27T20:00:05.734995+00:00",
   "events": [
     {
       "id": "0x2c3d7e0eee6f058be3006baabf0d54a07da254ba47fe6e3e095e7990c7814700",
@@ -1063,6 +1063,25 @@
         {
           "token_id": "11019686559003253359318459636510036787281809199165975947920974072245914352862",
           "name": "50+ bps increase"
+        }
+      ]
+    },
+    {
+      "id": "0x613d4907a46a75d7bdde8ff6fb78fb284c46d8aadb6d3f816567991deab59900",
+      "title": "Crystal Palace FC vs. Rayo Vallecano de Madrid",
+      "slug": "col-cry-ray-2026-05-27",
+      "outcomes": [
+        {
+          "token_id": "60613192653229054414335859665281776379772794531001220749327347453357329866359",
+          "name": "Crystal Palace FC"
+        },
+        {
+          "token_id": "17383589893859546915538067035013515891143423872778070634767567489729490378624",
+          "name": "Draw (Crystal Palace FC vs. Rayo Vallecano de Madrid)"
+        },
+        {
+          "token_id": "36421830744782126865409524946836852747797327525040219508764640022483485658205",
+          "name": "Rayo Vallecano de Madrid"
         }
       ]
     },
