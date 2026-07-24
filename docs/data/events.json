@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-24T00:51:56.396160+00:00",
+  "generated_at": "2026-07-24T01:59:11.767687+00:00",
   "events": [
     {
       "id": "0x40fd26ada6f086ebd83f34012327c0914d56154faf3fa36d912468c2532f3400",
@@ -1201,25 +1201,6 @@
       ]
     },
     {
-      "id": "0x09ae7dce6328b046753586a212b74815e8ea86060090cd4209a14bf3e616be00",
-      "title": "CA Sarmiento vs. AA Argentinos Juniors",
-      "slug": "arg-cas-aaj-2026-07-23",
-      "outcomes": [
-        {
-          "token_id": "4863831755312742809217166941115916764148831906895153205731266323421193688074",
-          "name": "CA Sarmiento"
-        },
-        {
-          "token_id": "73632925623922202129058958802311901823618748992766334239547542162669496777180",
-          "name": "Draw (CA Sarmiento vs. AA Argentinos Juniors)"
-        },
-        {
-          "token_id": "114686472878491722276586653195380658634019007801393302179787770673961141543657",
-          "name": "AA Argentinos Juniors"
-        }
-      ]
-    },
-    {
       "id": "0x966a3221e05d8d0579854c4952085331da2a42989dee0fa033d24cada9dfca00",
       "title": "Brazil Presidential Election",
       "slug": "brazil-presidential-election",
@@ -1870,6 +1851,25 @@
         {
           "token_id": "56276407178137464106155902677779647430650342076032000643690644026940603132442",
           "name": "Other"
+        }
+      ]
+    },
+    {
+      "id": "0x031fd5c82632bae3c02e88587ae78a7dda3de32b382a849d3b932a55927f5e00",
+      "title": "Club Bolívar vs. Grêmio FBPA",
+      "slug": "sud-bol-gre-2026-07-23",
+      "outcomes": [
+        {
+          "token_id": "82087349793164445998402418592040959987018024823911801314132537350519915632249",
+          "name": "Club Bolívar"
+        },
+        {
+          "token_id": "3105375195105839476335343633244316621315486585138794298252892064875767207433",
+          "name": "Draw (Club Bolívar vs. Grêmio FBPA)"
+        },
+        {
+          "token_id": "29531378750649722673094106069792408510584408444856283765819672491441759594383",
+          "name": "Grêmio FBPA"
         }
       ]
     }
