@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-28T20:42:57.189527+00:00",
+  "generated_at": "2026-07-28T21:41:35.650860+00:00",
   "events": [
     {
       "id": "0x40fd26ada6f086ebd83f34012327c0914d56154faf3fa36d912468c2532f3400",
@@ -527,44 +527,6 @@
         {
           "token_id": "8080479588120732018296375902718444621208874622782484539626256541951661026514",
           "name": "BZ"
-        }
-      ]
-    },
-    {
-      "id": "0xf59a2927d8ab76e2246e792cb00e49c6f53eb4cbc55edbcf137880b828a9a500",
-      "title": "Heart of Midlothian FC vs. SK Puntigamer Sturm Graz",
-      "slug": "ucl-hmi-stu1-2026-07-28",
-      "outcomes": [
-        {
-          "token_id": "27320279428095475738160048634581696465304970267986513278675356600204846791353",
-          "name": "Heart of Midlothian FC"
-        },
-        {
-          "token_id": "43309960425046789936486438202217577940930616317844388113716721559241696020973",
-          "name": "Draw (Heart of Midlothian FC vs. SK Puntigamer Sturm Graz)"
-        },
-        {
-          "token_id": "17436413980459064592291039241782041406531898470434116812354222170077199633351",
-          "name": "SK Puntigamer Sturm Graz"
-        }
-      ]
-    },
-    {
-      "id": "0x970abe584e50c7ca422a2f87581f9e1b9768c0ea474a6dad21b201dc68140b00",
-      "title": "GNK Dinamo Zagreb vs. FC Thun",
-      "slug": "ucl-din-thu-2026-07-28",
-      "outcomes": [
-        {
-          "token_id": "81620146340394157542376009999326128953556134950203947754795643344590044854167",
-          "name": "GNK Dinamo Zagreb"
-        },
-        {
-          "token_id": "2656890726136705478220416926553050129057512223031100538307959023320769465688",
-          "name": "Draw (GNK Dinamo Zagreb vs. FC Thun)"
-        },
-        {
-          "token_id": "28063066249589971263634817107853124795866119528181760896958267404689010353328",
-          "name": "FC Thun"
         }
       ]
     }
