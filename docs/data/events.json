@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-02T00:57:53.417916+00:00",
+  "generated_at": "2026-08-02T01:59:25.311806+00:00",
   "events": [
     {
       "id": "0x178e5d521fe40d169fbd095a16e69d08c294b1f6de6c38dfcdeeee0c66990c00",
@@ -1015,44 +1015,6 @@
         {
           "token_id": "102942177842314078984029840491211530375874563285953230070351014432141832760927",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0xcdeac683a3568a15a9387fe4868b8c5535f4ccb74232d2c7ba44ac97bffbcc00",
-      "title": "Philadelphia Union vs. Atlanta United FC",
-      "slug": "mls-phi-atl-2026-08-01",
-      "outcomes": [
-        {
-          "token_id": "37114106142308502378396399504473348021621109250140236626946058316647430151811",
-          "name": "Philadelphia Union"
-        },
-        {
-          "token_id": "86611759246369454696989856207041648792359358671593835945636751782396609056386",
-          "name": "Draw (Philadelphia Union vs. Atlanta United FC)"
-        },
-        {
-          "token_id": "58638374004585220508572449479049740068142989884318770730755678072670343437595",
-          "name": "Atlanta United FC"
-        }
-      ]
-    },
-    {
-      "id": "0xc310af4477bc472219d44b73db6a39e1aa43c3b3bc7c107eb324be5f72b70400",
-      "title": "Vancouver Whitecaps FC vs. Los Angeles FC",
-      "slug": "mls-vwh-laf-2026-08-01",
-      "outcomes": [
-        {
-          "token_id": "27106641603547292195143494314113888933230685732474188680538823968497749025376",
-          "name": "Vancouver Whitecaps FC"
-        },
-        {
-          "token_id": "5352253538195263416910930206453310971597496206992660759197683710771206971527",
-          "name": "Draw (Vancouver Whitecaps FC vs. Los Angeles FC)"
-        },
-        {
-          "token_id": "96683644929610494535407900068835094324605245591865755167458245160342763159469",
-          "name": "Los Angeles FC"
         }
       ]
     },
