@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-08T02:22:42.691902+00:00",
+  "generated_at": "2026-08-08T04:29:13.951347+00:00",
   "events": [
     {
       "id": "0x128d7d75905674954c484aa559fd18435376720a91f4614a2a5c2b60aa94c900",
@@ -25,6 +25,81 @@
         {
           "token_id": "88912926533493988427719291698947688154042720958310632316541141466409683822293",
           "name": "50+ bps increase"
+        }
+      ]
+    },
+    {
+      "id": "0xceb995a0cf48294c88a5bd3397ab12e12b059490d5a35a72d8f34d723d0c5e00",
+      "title": "1. FC Cologne vs. Real Sociedad San Sebastian - Exact Score",
+      "slug": "clf-koe-rso-2026-08-07-exact-score",
+      "outcomes": [
+        {
+          "token_id": "18363101451941301790497079919971337646034104079698559807282258155950819598107",
+          "name": "1. FC Cologne 0 - 0 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "83536633695436629905438106128885375080297360319145822616765405622019547639244",
+          "name": "1. FC Cologne 0 - 1 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "9195625965693117293021776568760283929216904800989707046246037674405969429051",
+          "name": "1. FC Cologne 1 - 0 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "83656285586715144960820323281357041415782345858777722443231657921424927694224",
+          "name": "1. FC Cologne 0 - 2 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "34547459691513958926450710629472494863816528985864379344965822921662447737816",
+          "name": "1. FC Cologne 1 - 1 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "114683307715158346262260806746541517542584041052802131623437905765784287077844",
+          "name": "1. FC Cologne 2 - 0 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "85522263460168350290185869856470689821953961608293014976561623486579161444125",
+          "name": "1. FC Cologne 0 - 3 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "53690819791622687868426501334260485501559444418562894654933007304597455558195",
+          "name": "1. FC Cologne 1 - 2 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "49660967835867140395271344085847294785454558059865925309614332389419417792270",
+          "name": "1. FC Cologne 2 - 1 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "102185956986435499084350163003716888004522423778740841636679234215366661048948",
+          "name": "1. FC Cologne 3 - 0 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "51057994713623907177959432102428134521997659340374150941634082510203083828831",
+          "name": "1. FC Cologne 1 - 3 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "101453345663895914116293179158007638605546930025277033016953612514658353234633",
+          "name": "1. FC Cologne 2 - 2 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "39989389104659098908214955025767668849810835277436610472917290715343831139165",
+          "name": "1. FC Cologne 3 - 1 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "56159085113239131335195735910869524250966910711918084518033702214201399479663",
+          "name": "1. FC Cologne 2 - 3 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "42125456650562833546802270379655838855690329235369224912322359565314835494171",
+          "name": "1. FC Cologne 3 - 2 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "37573624199903189891476800938751539796594029490262244855446244149305290115142",
+          "name": "1. FC Cologne 3 - 3 Real Sociedad San Sebastian"
+        },
+        {
+          "token_id": "27512643352136223916994915915326491478399782766996069223103087551719079661538",
+          "name": "Any Other Score"
         }
       ]
     },
