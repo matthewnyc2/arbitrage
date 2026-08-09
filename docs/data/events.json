@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-09T20:52:42.345809+00:00",
+  "generated_at": "2026-08-09T21:49:30.021895+00:00",
   "events": [
     {
       "id": "0x55ab76d092f682bf5cbb7e14f13ee12f8410ce7cc1b7906f23b8fb56c11f6500",
@@ -362,21 +362,21 @@
       ]
     },
     {
-      "id": "0x64efca4086482e5dca11214e7eaec9cf2bba07306c88108304d56eea2a65f200",
-      "title": "FC Porto vs. FC Alverca",
-      "slug": "por-por-alv-2026-08-09",
+      "id": "0x25cab953b7b7d850bf7f27e6041b0c5101ace43fd77ed4e68441e97a48b1aa00",
+      "title": "Sport Lisboa e Benfica vs. Académico de Viseu FC",
+      "slug": "por-ben-acv-2026-08-09",
       "outcomes": [
         {
-          "token_id": "72204454506232657642953372692762473005221324419107497084106345896427529236358",
-          "name": "FC Porto"
+          "token_id": "104990481094598624380560350846866577202997905325906318142725843204128544354845",
+          "name": "Sport Lisboa e Benfica"
         },
         {
-          "token_id": "97158179235536472258349871232809275987218890033372174011533756555740026070321",
-          "name": "Draw (FC Porto vs. FC Alverca)"
+          "token_id": "22088719660262758461015875959962729010957134087855822032880322792371809088850",
+          "name": "Draw (Sport Lisboa e Benfica vs. Académico de Viseu FC)"
         },
         {
-          "token_id": "56255398648954013838151398578231271741643979708317616056161620182854469516751",
-          "name": "FC Alverca"
+          "token_id": "88954603639215198174247915836038678485494044207295151549947511658500344838835",
+          "name": "Académico de Viseu FC"
         }
       ]
     }
