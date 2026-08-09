@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-09T14:02:10.579104+00:00",
+  "generated_at": "2026-08-09T14:54:00.740144+00:00",
   "events": [
     {
       "id": "0x55ab76d092f682bf5cbb7e14f13ee12f8410ce7cc1b7906f23b8fb56c11f6500",
@@ -164,6 +164,25 @@
         {
           "token_id": "88912926533493988427719291698947688154042720958310632316541141466409683822293",
           "name": "50+ bps increase"
+        }
+      ]
+    },
+    {
+      "id": "0x51ed2fd3d18ca80b4cc83da839ec3f999ed1b63b3d37e6d8de85866f2e5a0000",
+      "title": "Manchester City vs. Atletico Madrid",
+      "slug": "clf-mci-atm-2026-08-09",
+      "outcomes": [
+        {
+          "token_id": "44810975335938395920466297261607175904141058562017734182701485530164594254652",
+          "name": "Manchester City"
+        },
+        {
+          "token_id": "90528573454470022835424269382658395718997841569841510693252009895604957882435",
+          "name": "Draw (Manchester City vs. Atletico Madrid)"
+        },
+        {
+          "token_id": "3742867408989816079671731233776518826483714748678624094817815712900198961710",
+          "name": "Atletico Madrid"
         }
       ]
     },
@@ -862,25 +881,6 @@
       ]
     },
     {
-      "id": "0x51ed2fd3d18ca80b4cc83da839ec3f999ed1b63b3d37e6d8de85866f2e5a0000",
-      "title": "Manchester City vs. Atletico Madrid",
-      "slug": "clf-mci-atm-2026-08-09",
-      "outcomes": [
-        {
-          "token_id": "44810975335938395920466297261607175904141058562017734182701485530164594254652",
-          "name": "Manchester City"
-        },
-        {
-          "token_id": "90528573454470022835424269382658395718997841569841510693252009895604957882435",
-          "name": "Draw (Manchester City vs. Atletico Madrid)"
-        },
-        {
-          "token_id": "3742867408989816079671731233776518826483714748678624094817815712900198961710",
-          "name": "Atletico Madrid"
-        }
-      ]
-    },
-    {
       "id": "0x1cf8d036ded91d903f00eb86429f7c233bc3b7b5b42116c615b8f55eda226100",
       "title": "Chongqing Tonglianglong FC vs. Shanghai Haigang FC",
       "slug": "chi-ton-shp-2026-08-09",
@@ -900,21 +900,21 @@
       ]
     },
     {
-      "id": "0xfbc8025b76b6a007869d64c76a09623024c5a2c8dd85fb4966de8e17e5b93400",
-      "title": "Sparta Rotterdam vs. Feyenoord Rotterdam",
-      "slug": "ere-spa-fey-2026-08-09",
+      "id": "0xe9c50fc164a200e88a1ab554ea282c9d66ee133c194fe167d8d0ef2be3d48500",
+      "title": "Cruzeiro EC vs. Mirassol FC",
+      "slug": "bra-cru-mir-2026-08-09",
       "outcomes": [
         {
-          "token_id": "27479319342357184979539725129983841527390745643557884434319994930841246005163",
-          "name": "Sparta Rotterdam"
+          "token_id": "19938599369634311438930043387109068967591125250476215711130779081297851648487",
+          "name": "Cruzeiro EC"
         },
         {
-          "token_id": "95148426942827000821302895159072452627392401260260239047606564297398124515921",
-          "name": "Draw (Sparta Rotterdam vs. Feyenoord Rotterdam)"
+          "token_id": "7662843762300026715830772721003342513567743512237331820989766125143596495896",
+          "name": "Draw (Cruzeiro EC vs. Mirassol FC)"
         },
         {
-          "token_id": "38618396785334417884649246927544511310826669043003464158165827882596032803823",
-          "name": "Feyenoord Rotterdam"
+          "token_id": "110678802588585765629536783821510597503353045017799401433771377558400895020288",
+          "name": "Mirassol FC"
         }
       ]
     },
