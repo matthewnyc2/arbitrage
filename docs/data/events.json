@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-12T16:12:53.015596+00:00",
+  "generated_at": "2026-08-12T17:14:33.804765+00:00",
   "events": [
     {
       "id": "0x128d7d75905674954c484aa559fd18435376720a91f4614a2a5c2b60aa94c900",
@@ -152,25 +152,6 @@
       ]
     },
     {
-      "id": "0x4fda7e45df605c460f6f2f42619065cff7ecabef4c5aa87705149c58620aed00",
-      "title": "Paris Saint-Germain vs. Aston Villa",
-      "slug": "usc-psg-av-2026-08-12",
-      "outcomes": [
-        {
-          "token_id": "61589009001195241558796708472897936503409913017383866002372087826054686967938",
-          "name": "Paris Saint-Germain"
-        },
-        {
-          "token_id": "82921164289573705574419806475418263050666934330709857118714871942165029696097",
-          "name": "Draw (Paris Saint-Germain vs. Aston Villa)"
-        },
-        {
-          "token_id": "103279066844414976721836967769235054308435864631300573719872844420404791473692",
-          "name": "Aston Villa"
-        }
-      ]
-    },
-    {
       "id": "0x55ab76d092f682bf5cbb7e14f13ee12f8410ce7cc1b7906f23b8fb56c11f6500",
       "title": "Next Prime Minister of Ethiopia?",
       "slug": "next-prime-minister-of-ethiopia",
@@ -306,6 +287,25 @@
         {
           "token_id": "73120804637873073793472778384640682007230107387640524456813358654679396976448",
           "name": "Other"
+        }
+      ]
+    },
+    {
+      "id": "0x4fda7e45df605c460f6f2f42619065cff7ecabef4c5aa87705149c58620aed00",
+      "title": "Paris Saint-Germain vs. Aston Villa",
+      "slug": "usc-psg-av-2026-08-12",
+      "outcomes": [
+        {
+          "token_id": "61589009001195241558796708472897936503409913017383866002372087826054686967938",
+          "name": "Paris Saint-Germain"
+        },
+        {
+          "token_id": "82921164289573705574419806475418263050666934330709857118714871942165029696097",
+          "name": "Draw (Paris Saint-Germain vs. Aston Villa)"
+        },
+        {
+          "token_id": "103279066844414976721836967769235054308435864631300573719872844420404791473692",
+          "name": "Aston Villa"
         }
       ]
     },
