@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T19:15:29.618282+00:00",
+  "generated_at": "2026-08-14T19:58:28.887187+00:00",
   "events": [
     {
       "id": "0xb9aa4595bbe8ca1ecceeb16d24fb5df6d27d4e2116787ad874ff31f682bdb400",
@@ -1587,6 +1587,25 @@
         {
           "token_id": "9348234470735473071085620208817441102005165766524508452759679947551704787649",
           "name": "12+ (300+ bps)"
+        }
+      ]
+    },
+    {
+      "id": "0xfbfb115ca991b7579dc933b503295aec6043166317ce8ce21ae8a31d6690db00",
+      "title": "Al Ettifaq Saudi Club vs. Al Riyadh Saudi Club",
+      "slug": "spl-ett-riy-2026-08-14",
+      "outcomes": [
+        {
+          "token_id": "2298404631779880248267912477367140411523650249431718859477334323196611963695",
+          "name": "Al Ettifaq Saudi Club"
+        },
+        {
+          "token_id": "63591797278611989277527205730122326852704867000783327727076002637213393078242",
+          "name": "Draw (Al Ettifaq Saudi Club vs. Al Riyadh Saudi Club)"
+        },
+        {
+          "token_id": "48992501419683669558982992160591614156810309244989875581222439807132800771163",
+          "name": "Al Riyadh Saudi Club"
         }
       ]
     }
