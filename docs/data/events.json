@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-15T11:35:33.691074+00:00",
+  "generated_at": "2026-08-15T13:00:20.118766+00:00",
   "events": [
     {
       "id": "0x55ab76d092f682bf5cbb7e14f13ee12f8410ce7cc1b7906f23b8fb56c11f6500",
@@ -893,6 +893,25 @@
         {
           "token_id": "9348234470735473071085620208817441102005165766524508452759679947551704787649",
           "name": "12+ (300+ bps)"
+        }
+      ]
+    },
+    {
+      "id": "0xeb08776ee7062f176b1f994d3a6c33b9c15f830e3f3ba3d73e85984b01804e00",
+      "title": "Liaoning Tieren FC vs. Shenzhen Xinpengcheng FC",
+      "slug": "chi-tie-xin-2026-08-15",
+      "outcomes": [
+        {
+          "token_id": "64637532132825972186346704372034154420249878134704246040324772962900910202575",
+          "name": "Liaoning Tieren FC"
+        },
+        {
+          "token_id": "112854761359986987067966373625605000772062454409652044303651217817591689595677",
+          "name": "Draw (Liaoning Tieren FC vs. Shenzhen Xinpengcheng FC)"
+        },
+        {
+          "token_id": "109260075137622796900006074524431431884883331980323705710266377322439864805263",
+          "name": "Shenzhen Xinpengcheng FC"
         }
       ]
     },
