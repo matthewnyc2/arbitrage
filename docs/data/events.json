@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-16T22:38:28.620199+00:00",
+  "generated_at": "2026-08-16T23:35:01.555145+00:00",
   "events": [
     {
       "id": "0x55ab76d092f682bf5cbb7e14f13ee12f8410ce7cc1b7906f23b8fb56c11f6500",
@@ -276,44 +276,6 @@
       ]
     },
     {
-      "id": "0xd8f7f9da0d8f37962b29f7d3fa781b8071ccc418dfce3b45eaf2f4e0acda9100",
-      "title": "Racing Club De Lens vs. Paris Saint-Germain",
-      "slug": "frtc-rcl-psg-2026-08-16",
-      "outcomes": [
-        {
-          "token_id": "21447311638435106547423505551775405427987959162334231686861620496169309635580",
-          "name": "Racing Club De Lens"
-        },
-        {
-          "token_id": "57560969289607527275850056137183477978766819767698573274921511772938235054315",
-          "name": "Draw (Racing Club De Lens vs. Paris Saint-Germain)"
-        },
-        {
-          "token_id": "35914544142063552046653312350372304397763896211596092311933576569652681111417",
-          "name": "Paris Saint-Germain"
-        }
-      ]
-    },
-    {
-      "id": "0xc2bc6ce834706a0c12dda723ec2515e9f5ac945d214e500db1b2c3f8bfd8ea00",
-      "title": "New York City FC vs. Philadelphia Union",
-      "slug": "mls-nyc-phi-2026-08-16",
-      "outcomes": [
-        {
-          "token_id": "3203948284303321958776183354536983828624857422901736691695162251846853768881",
-          "name": "New York City FC"
-        },
-        {
-          "token_id": "111748036618093622810746140272032211873231389895169321918760317109149890832514",
-          "name": "Draw (New York City FC vs. Philadelphia Union)"
-        },
-        {
-          "token_id": "80726572663632811666817735150427535167896252074229531776987447025255840161572",
-          "name": "Philadelphia Union"
-        }
-      ]
-    },
-    {
       "id": "0xfb5399f0e1c4ea4d78a40957d48838ab5769fcec80592b8ce2ffd6e27a3cad00",
       "title": "UEFA Champions League: 2027 Champion",
       "slug": "uefa-champions-league-2027-champion-20260701202025549",
@@ -485,6 +447,63 @@
         {
           "token_id": "84905609915252712419647038791989399111163088657795682911173186600944756383286",
           "name": "Team L"
+        }
+      ]
+    },
+    {
+      "id": "0xc2bc6ce834706a0c12dda723ec2515e9f5ac945d214e500db1b2c3f8bfd8ea00",
+      "title": "New York City FC vs. Philadelphia Union",
+      "slug": "mls-nyc-phi-2026-08-16",
+      "outcomes": [
+        {
+          "token_id": "3203948284303321958776183354536983828624857422901736691695162251846853768881",
+          "name": "New York City FC"
+        },
+        {
+          "token_id": "111748036618093622810746140272032211873231389895169321918760317109149890832514",
+          "name": "Draw (New York City FC vs. Philadelphia Union)"
+        },
+        {
+          "token_id": "80726572663632811666817735150427535167896252074229531776987447025255840161572",
+          "name": "Philadelphia Union"
+        }
+      ]
+    },
+    {
+      "id": "0x02e7dfca2411413b51c02e65fa378c2ecb5f2d6c35c964bfe430e5ad3d791200",
+      "title": "CF América vs. Atlético San Luis",
+      "slug": "mex-ame-asl-2026-08-16",
+      "outcomes": [
+        {
+          "token_id": "81790088902343448250721545511546917319756889342622811673102549672899258517760",
+          "name": "CF América"
+        },
+        {
+          "token_id": "27566866477640470990784236125763993522777938662963084624454118157201832211029",
+          "name": "Draw (CF América vs. Atlético San Luis)"
+        },
+        {
+          "token_id": "99575010134362334395958361178444787877265800438634348750628368281205501462434",
+          "name": "Atlético San Luis"
+        }
+      ]
+    },
+    {
+      "id": "0xf2b4760c6e839e85fe20c69ebe3f62705b000c4e71364616fd9d31f402e51000",
+      "title": "SC Corinthians Paulista vs. Cruzeiro EC",
+      "slug": "bra-cor1-cru-2026-08-16",
+      "outcomes": [
+        {
+          "token_id": "107361726294192788245538237914486293866643157017887057156775235540516111144500",
+          "name": "SC Corinthians Paulista"
+        },
+        {
+          "token_id": "16268453338217318177888292641061195996577184998389285776615001259682401324239",
+          "name": "Draw (SC Corinthians Paulista vs. Cruzeiro EC)"
+        },
+        {
+          "token_id": "55503279864934990611496177547966294014106856356684417663234138731843160638610",
+          "name": "Cruzeiro EC"
         }
       ]
     },
@@ -1004,25 +1023,6 @@
         {
           "token_id": "102942177842314078984029840491211530375874563285953230070351014432141832760927",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0x02e7dfca2411413b51c02e65fa378c2ecb5f2d6c35c964bfe430e5ad3d791200",
-      "title": "CF América vs. Atlético San Luis",
-      "slug": "mex-ame-asl-2026-08-16",
-      "outcomes": [
-        {
-          "token_id": "81790088902343448250721545511546917319756889342622811673102549672899258517760",
-          "name": "CF América"
-        },
-        {
-          "token_id": "27566866477640470990784236125763993522777938662963084624454118157201832211029",
-          "name": "Draw (CF América vs. Atlético San Luis)"
-        },
-        {
-          "token_id": "99575010134362334395958361178444787877265800438634348750628368281205501462434",
-          "name": "Atlético San Luis"
         }
       ]
     },
