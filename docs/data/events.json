@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-16T04:51:13.474152+00:00",
+  "generated_at": "2026-08-16T05:44:35.454767+00:00",
   "events": [
     {
       "id": "0x55ab76d092f682bf5cbb7e14f13ee12f8410ce7cc1b7906f23b8fb56c11f6500",
@@ -1341,6 +1341,25 @@
       ]
     },
     {
+      "id": "0xe6bae44b6c468edd33f7135adbe42c890f553ada4cdf61eefb6d9c4677bbac00",
+      "title": "Atlas FC vs. Tigres de la UANL",
+      "slug": "mex-atl-tig-2026-08-15",
+      "outcomes": [
+        {
+          "token_id": "45634279754624296158614285340974895013971963169793844971310523189639413924883",
+          "name": "Atlas FC"
+        },
+        {
+          "token_id": "48687970189693126004477391987441910488628825815145995250070152452266670586575",
+          "name": "Draw (Atlas FC vs. Tigres de la UANL)"
+        },
+        {
+          "token_id": "17742138011732959393945201302520450952466997680705579064598202874973587667837",
+          "name": "Tigres de la UANL"
+        }
+      ]
+    },
+    {
       "id": "0xfb5399f0e1c4ea4d78a40957d48838ab5769fcec80592b8ce2ffd6e27a3cad00",
       "title": "UEFA Champions League: 2027 Champion",
       "slug": "uefa-champions-league-2027-champion-20260701202025549",
@@ -1512,44 +1531,6 @@
         {
           "token_id": "84905609915252712419647038791989399111163088657795682911173186600944756383286",
           "name": "Team L"
-        }
-      ]
-    },
-    {
-      "id": "0xe6bae44b6c468edd33f7135adbe42c890f553ada4cdf61eefb6d9c4677bbac00",
-      "title": "Atlas FC vs. Tigres de la UANL",
-      "slug": "mex-atl-tig-2026-08-15",
-      "outcomes": [
-        {
-          "token_id": "45634279754624296158614285340974895013971963169793844971310523189639413924883",
-          "name": "Atlas FC"
-        },
-        {
-          "token_id": "48687970189693126004477391987441910488628825815145995250070152452266670586575",
-          "name": "Draw (Atlas FC vs. Tigres de la UANL)"
-        },
-        {
-          "token_id": "17742138011732959393945201302520450952466997680705579064598202874973587667837",
-          "name": "Tigres de la UANL"
-        }
-      ]
-    },
-    {
-      "id": "0xf67e8a6f098566d5f002ce2a99f063022e47447a0dd2e97af80a20785c115100",
-      "title": "Los Angeles FC vs. San Diego FC",
-      "slug": "mls-laf-sdg-2026-08-15",
-      "outcomes": [
-        {
-          "token_id": "56679972456912693219050072471228607457265619234455433485527730700712964440861",
-          "name": "Los Angeles FC"
-        },
-        {
-          "token_id": "38509094351539331287129651705308002755249918194136301436011420824130476115143",
-          "name": "Draw (Los Angeles FC vs. San Diego FC)"
-        },
-        {
-          "token_id": "16808280446297460477862498857445677793749036164844433155764759345004581280263",
-          "name": "San Diego FC"
         }
       ]
     }
