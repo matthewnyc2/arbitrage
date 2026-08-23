@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-23T19:37:32.535955+00:00",
+  "generated_at": "2026-08-23T20:40:58.543597+00:00",
   "events": [
     {
       "id": "0x0eea8d1aea22425e5b4c432d5103706d0c37240d61007953b453136ccbf2e300",
@@ -559,6 +559,25 @@
       ]
     },
     {
+      "id": "0x03e4313a04ee8c0c1fdd7032e02db780651f833c944e59dd853a04e3079c1a00",
+      "title": "Paris Saint-Germain FC vs. Stade Rennais FC 1901",
+      "slug": "fl1-psg-ren-2026-08-23",
+      "outcomes": [
+        {
+          "token_id": "67628776139982787079232540395593518249718485497190321294846702936821085863276",
+          "name": "Paris Saint-Germain FC"
+        },
+        {
+          "token_id": "87510112844016059212592497557984657232001978140527115614124271488714239407895",
+          "name": "Draw (Paris Saint-Germain FC vs. Stade Rennais FC 1901)"
+        },
+        {
+          "token_id": "30629034705997930203675815699530107809428776630153831736610640755131309667115",
+          "name": "Stade Rennais FC 1901"
+        }
+      ]
+    },
+    {
       "id": "0xfb5399f0e1c4ea4d78a40957d48838ab5769fcec80592b8ce2ffd6e27a3cad00",
       "title": "UEFA Champions League: 2027 Champion",
       "slug": "uefa-champions-league-2027-champion-20260701202025549",
@@ -833,25 +852,6 @@
         {
           "token_id": "43139116324608850546278497554951886258496912421979895445989673422246890711748",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0x03e4313a04ee8c0c1fdd7032e02db780651f833c944e59dd853a04e3079c1a00",
-      "title": "Paris Saint-Germain FC vs. Stade Rennais FC 1901",
-      "slug": "fl1-psg-ren-2026-08-23",
-      "outcomes": [
-        {
-          "token_id": "67628776139982787079232540395593518249718485497190321294846702936821085863276",
-          "name": "Paris Saint-Germain FC"
-        },
-        {
-          "token_id": "87510112844016059212592497557984657232001978140527115614124271488714239407895",
-          "name": "Draw (Paris Saint-Germain FC vs. Stade Rennais FC 1901)"
-        },
-        {
-          "token_id": "30629034705997930203675815699530107809428776630153831736610640755131309667115",
-          "name": "Stade Rennais FC 1901"
         }
       ]
     },
