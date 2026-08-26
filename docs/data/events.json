@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T07:10:04.386419+00:00",
+  "generated_at": "2026-08-26T08:01:20.744997+00:00",
   "events": [
     {
       "id": "0x128d7d75905674954c484aa559fd18435376720a91f4614a2a5c2b60aa94c900",
@@ -723,6 +723,25 @@
       ]
     },
     {
+      "id": "0x181a9697c9944019a9713b0a28e558df6c740aecd2469e6100f1609a6bfba600",
+      "title": "Real Madrid CF vs. Real Sociedad de Fútbol",
+      "slug": "lal-rea-rso-2026-08-26",
+      "outcomes": [
+        {
+          "token_id": "26559765249952923865879350951475742913326516766941369247601657393449196813794",
+          "name": "Real Madrid CF"
+        },
+        {
+          "token_id": "37209829673564666234675741327909778695616957203083656080100575160396477498032",
+          "name": "Draw (Real Madrid CF vs. Real Sociedad de Fútbol)"
+        },
+        {
+          "token_id": "53308615677744126358482353061911688319968121743294611304992084452359113531102",
+          "name": "Real Sociedad de Fútbol"
+        }
+      ]
+    },
+    {
       "id": "0x966a3221e05d8d0579854c4952085331da2a42989dee0fa033d24cada9dfca00",
       "title": "Brazil Presidential Election",
       "slug": "brazil-presidential-election",
@@ -854,25 +873,6 @@
         {
           "token_id": "22044582519544355566308016593287714216336001424695495760091508036075098345768",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0x181a9697c9944019a9713b0a28e558df6c740aecd2469e6100f1609a6bfba600",
-      "title": "Real Madrid CF vs. Real Sociedad de Fútbol",
-      "slug": "lal-rea-rso-2026-08-26",
-      "outcomes": [
-        {
-          "token_id": "26559765249952923865879350951475742913326516766941369247601657393449196813794",
-          "name": "Real Madrid CF"
-        },
-        {
-          "token_id": "37209829673564666234675741327909778695616957203083656080100575160396477498032",
-          "name": "Draw (Real Madrid CF vs. Real Sociedad de Fútbol)"
-        },
-        {
-          "token_id": "53308615677744126358482353061911688319968121743294611304992084452359113531102",
-          "name": "Real Sociedad de Fútbol"
         }
       ]
     }
