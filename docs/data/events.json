@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T21:17:06.105780+00:00",
+  "generated_at": "2026-09-05T22:59:36.264017+00:00",
   "events": [
     {
       "id": "0x128d7d75905674954c484aa559fd18435376720a91f4614a2a5c2b60aa94c900",
@@ -1261,6 +1261,25 @@
       ]
     },
     {
+      "id": "0xc5cd8d9940d4cb2b8f17b298a8ca0f8b144696581addc7b6e8c033d708be5b00",
+      "title": "Columbus Crew vs. Colorado Rapids SC",
+      "slug": "mls-clb-col-2026-09-05",
+      "outcomes": [
+        {
+          "token_id": "57445273691600216065997451543241404354358816062140252632916620958269588005826",
+          "name": "Columbus Crew"
+        },
+        {
+          "token_id": "92221140501367558625263750397546000195751114046878864243394479779280939184747",
+          "name": "Draw (Columbus Crew vs. Colorado Rapids SC)"
+        },
+        {
+          "token_id": "95928204481626995419701858954372757328443751378839670208660178552203407997249",
+          "name": "Colorado Rapids SC"
+        }
+      ]
+    },
+    {
       "id": "0x083d56924e3461c604df5314b0e0cbad5fd9b28532cfac11d1d3ff72e3ca4900",
       "title": "Which company has the best AI model end of September?",
       "slug": "which-company-has-the-best-ai-model-end-of-september-20260717143435868",
@@ -1392,25 +1411,6 @@
         {
           "token_id": "89108791064124115628297622450312332841432928534900751523960911111594074336656",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0xb0805112a1f6934e681227319569dcd8105d5c6a6534e3ddafed8f7ddf367100",
-      "title": "AFC Ajax vs. PSV",
-      "slug": "ere-aja-psv-2026-09-05",
-      "outcomes": [
-        {
-          "token_id": "106138818795801464456614602640148720942438704460196746058451014250849920909955",
-          "name": "AFC Ajax"
-        },
-        {
-          "token_id": "54831917068759722435783736623754492955374448395729120918103247742657398477061",
-          "name": "Draw (AFC Ajax vs. PSV)"
-        },
-        {
-          "token_id": "68650445214049251868938973770503086414950228324012469373856697246376911570357",
-          "name": "PSV"
         }
       ]
     }
