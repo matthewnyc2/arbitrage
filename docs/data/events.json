@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T11:04:14.261932+00:00",
+  "generated_at": "2026-09-19T14:27:15.478482+00:00",
   "events": [
     {
       "id": "0xc194d621e2ef9468b86ed0db1328fd8d56ae8fba1e21b94c5c515e96ecbfc400",
@@ -160,6 +160,44 @@
         {
           "token_id": "70582627163113602350878402374353915138152347570140651655581807842862381713575",
           "name": "FC Barcelona"
+        }
+      ]
+    },
+    {
+      "id": "0x7a44795d29a6a770ac83e8b8de9dc1add8eb16b49f0a82d1630cc326827cd200",
+      "title": "Brighton & Hove Albion FC vs. Arsenal FC",
+      "slug": "epl-bri-ars-2026-09-19",
+      "outcomes": [
+        {
+          "token_id": "54411436615685324569886808643860500283493920530489723145877766030375543776892",
+          "name": "Brighton & Hove Albion FC"
+        },
+        {
+          "token_id": "88793823915059998882138707933641201137749234916447056039713255233899371922647",
+          "name": "Draw (Brighton & Hove Albion FC vs. Arsenal FC)"
+        },
+        {
+          "token_id": "862092363296561925822904801510244553335970506302984573517763666275865804119",
+          "name": "Arsenal FC"
+        }
+      ]
+    },
+    {
+      "id": "0x3e515ad1622b2d667696d2ef929938e1f7d0aa4beb674be0df9fca13979e8400",
+      "title": "Newcastle United FC vs. Hull City AFC",
+      "slug": "epl-new-hul-2026-09-19",
+      "outcomes": [
+        {
+          "token_id": "76682111040191835088314949562464732447263095718369741604772799470585317555559",
+          "name": "Newcastle United FC"
+        },
+        {
+          "token_id": "75312468196748292556495808387686699972265881931389266989261835837356486880481",
+          "name": "Draw (Newcastle United FC vs. Hull City AFC)"
+        },
+        {
+          "token_id": "47513414900586727837016237254027670476439207700383284607423208799646005791629",
+          "name": "Hull City AFC"
         }
       ]
     },
@@ -362,44 +400,6 @@
         {
           "token_id": "18246296022868501258060085368606280205967114341141276439803424448463050819498",
           "name": "50+ bps increase"
-        }
-      ]
-    },
-    {
-      "id": "0x7ff40afc01adcd785990698dc36878f43ef9a81a54f9c7cdf3f09cde900f4a00",
-      "title": "Tottenham Hotspur FC vs. Aston Villa FC",
-      "slug": "epl-tot-ast-2026-09-19",
-      "outcomes": [
-        {
-          "token_id": "110224733210041131679014459885672088479785652252594597634309518568227972935874",
-          "name": "Tottenham Hotspur FC"
-        },
-        {
-          "token_id": "112472234277593329441809935457825874883960516422397922796962048352846886451118",
-          "name": "Draw (Tottenham Hotspur FC vs. Aston Villa FC)"
-        },
-        {
-          "token_id": "27524852841755679662782494694835026990013491277928016488550923195502712855061",
-          "name": "Aston Villa FC"
-        }
-      ]
-    },
-    {
-      "id": "0x7a44795d29a6a770ac83e8b8de9dc1add8eb16b49f0a82d1630cc326827cd200",
-      "title": "Brighton & Hove Albion FC vs. Arsenal FC",
-      "slug": "epl-bri-ars-2026-09-19",
-      "outcomes": [
-        {
-          "token_id": "54411436615685324569886808643860500283493920530489723145877766030375543776892",
-          "name": "Brighton & Hove Albion FC"
-        },
-        {
-          "token_id": "88793823915059998882138707933641201137749234916447056039713255233899371922647",
-          "name": "Draw (Brighton & Hove Albion FC vs. Arsenal FC)"
-        },
-        {
-          "token_id": "862092363296561925822904801510244553335970506302984573517763666275865804119",
-          "name": "Arsenal FC"
         }
       ]
     },
