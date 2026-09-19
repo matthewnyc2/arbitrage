@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T18:03:36.018904+00:00",
+  "generated_at": "2026-09-19T20:44:10.388868+00:00",
   "events": [
     {
       "id": "0xc194d621e2ef9468b86ed0db1328fd8d56ae8fba1e21b94c5c515e96ecbfc400",
@@ -164,44 +164,6 @@
       ]
     },
     {
-      "id": "0x3e515ad1622b2d667696d2ef929938e1f7d0aa4beb674be0df9fca13979e8400",
-      "title": "Newcastle United FC vs. Hull City AFC",
-      "slug": "epl-new-hul-2026-09-19",
-      "outcomes": [
-        {
-          "token_id": "76682111040191835088314949562464732447263095718369741604772799470585317555559",
-          "name": "Newcastle United FC"
-        },
-        {
-          "token_id": "75312468196748292556495808387686699972265881931389266989261835837356486880481",
-          "name": "Draw (Newcastle United FC vs. Hull City AFC)"
-        },
-        {
-          "token_id": "47513414900586727837016237254027670476439207700383284607423208799646005791629",
-          "name": "Hull City AFC"
-        }
-      ]
-    },
-    {
-      "id": "0xfa850b1992c92683b21aa76a1eadbda1df5a9084af8b4036727f3bf8e7713200",
-      "title": "Nottingham Forest FC vs. Coventry City FC",
-      "slug": "epl-not-cov-2026-09-19",
-      "outcomes": [
-        {
-          "token_id": "63813252137877331817881033511318561506777439536545195181874132181161297309189",
-          "name": "Nottingham Forest FC"
-        },
-        {
-          "token_id": "57939135714553159535514606347426026666452576225445551267896376036962752100502",
-          "name": "Draw (Nottingham Forest FC vs. Coventry City FC)"
-        },
-        {
-          "token_id": "19147059746796840013008921096538318875801792334763231157667094081710115726872",
-          "name": "Coventry City FC"
-        }
-      ]
-    },
-    {
       "id": "0x697ad5ad79df81b98b58ef5ea0ff713d40397e526b98bd36fbe57d4be4365000",
       "title": "EPL: 2027 Champion",
       "slug": "epl-2027-champion-20260701200428749",
@@ -301,25 +263,6 @@
         {
           "token_id": "43139116324608850546278497554951886258496912421979895445989673422246890711748",
           "name": "Other"
-        }
-      ]
-    },
-    {
-      "id": "0x79328b4547155cbbf3cc566cecb8327260ee968c2aba5596a2d8cfb18a8c8e00",
-      "title": "AS Roma vs. FC Internazionale Milano",
-      "slug": "sea-rom-int-2026-09-19",
-      "outcomes": [
-        {
-          "token_id": "53277991431663501015638056333569929880350089786881144297844073643190189449616",
-          "name": "AS Roma"
-        },
-        {
-          "token_id": "13869424843460725228872862971819037204663962623942392821578804191026374006292",
-          "name": "Draw (AS Roma vs. FC Internazionale Milano)"
-        },
-        {
-          "token_id": "30874954496242817519842539090584269777200701622261385776678474896806534184269",
-          "name": "FC Internazionale Milano"
         }
       ]
     },
