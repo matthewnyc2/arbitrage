@@ -1,44 +1,6 @@
 {
-  "generated_at": "2026-10-18T14:37:31.999274+00:00",
+  "generated_at": "2026-10-18T18:08:53.653584+00:00",
   "events": [
-    {
-      "id": "0x3be1f8b471bbb93a0edd9e0ca6d2ad1938f346100378663e05935d910a71ee00",
-      "title": "Brighton & Hove Albion FC vs. Crystal Palace FC",
-      "slug": "epl-bri-cry-2026-10-18",
-      "outcomes": [
-        {
-          "token_id": "84518819913964152527507553069384722562110220338873347628048170033408286829113",
-          "name": "Brighton & Hove Albion FC"
-        },
-        {
-          "token_id": "53081820532795235644025657365731362232122499827606915372922030825857613362895",
-          "name": "Draw (Brighton & Hove Albion FC vs. Crystal Palace FC)"
-        },
-        {
-          "token_id": "87873404168827964034550597363185544960547255768087577276760041111370228746472",
-          "name": "Crystal Palace FC"
-        }
-      ]
-    },
-    {
-      "id": "0xb80277c1758555d2ab58fd86c119c62c8e4eacea02fe54bc2bc7c192af702900",
-      "title": "ACF Fiorentina vs. Como 1907",
-      "slug": "sea-fio-com-2026-10-18",
-      "outcomes": [
-        {
-          "token_id": "40115560582337285049407271175407690513392625737892099076400273091163087217004",
-          "name": "ACF Fiorentina"
-        },
-        {
-          "token_id": "105259531968426729593809473625255707948275281455046498740966531660378966607001",
-          "name": "Draw (ACF Fiorentina vs. Como 1907)"
-        },
-        {
-          "token_id": "111929448760621271508974572142564631073108665876921474168080655525021050358904",
-          "name": "Como 1907"
-        }
-      ]
-    },
     {
       "id": "0xcc439cda1ab96d14ca806ffbe41147712602a2e45ebb8b6c8d4542ecb0b21500",
       "title": "Real Madrid CF vs. Sevilla FC",
@@ -55,44 +17,6 @@
         {
           "token_id": "52427941874312069116105456794724230757037069151135806966954645571395592545078",
           "name": "Sevilla FC"
-        }
-      ]
-    },
-    {
-      "id": "0x8a7e25ac39fc5ef7c66687cf7512bb62583914efe277791be6f83891005c0700",
-      "title": "Leeds United FC vs. Manchester United FC",
-      "slug": "epl-lee-mun-2026-10-18",
-      "outcomes": [
-        {
-          "token_id": "34020569485949390434092453776234146958179225699579411132499958841047996143534",
-          "name": "Leeds United FC"
-        },
-        {
-          "token_id": "71495165797562104935263392853932155620329529736381445410341397541005033333109",
-          "name": "Draw (Leeds United FC vs. Manchester United FC)"
-        },
-        {
-          "token_id": "88220401319820287797023587461928387864560165463769494309016571588052962174159",
-          "name": "Manchester United FC"
-        }
-      ]
-    },
-    {
-      "id": "0xd4deb02cc84d904fc715653ea3d8818f503cd4758e9b7c870dca4a2cf6db8200",
-      "title": "AFC Bournemouth vs. Sunderland AFC",
-      "slug": "epl-bou-sun-2026-10-18",
-      "outcomes": [
-        {
-          "token_id": "90608692162892337044333418552404205576306805824402422725718494245658809068971",
-          "name": "AFC Bournemouth"
-        },
-        {
-          "token_id": "36434872494940340777105371878927885902862641013787316917707387609794864528140",
-          "name": "Draw (AFC Bournemouth vs. Sunderland AFC)"
-        },
-        {
-          "token_id": "30894880993335030135629081026154876774462500418515042564491285959554687290101",
-          "name": "Sunderland AFC"
         }
       ]
     },
@@ -735,21 +659,40 @@
       ]
     },
     {
-      "id": "0xe0daf82e1db385b1eb2389ff617cf70b9a831d3ed3fcb060153c3a9e2c74b500",
-      "title": "Nottingham Forest FC vs. Arsenal FC",
-      "slug": "epl-not-ars-2026-10-18",
+      "id": "0xc4fb4cb347208094d61ca8118c8da5cb0ba1787cf6401ec18a77979054057f00",
+      "title": "Málaga CF vs. Real Sociedad de Fútbol",
+      "slug": "lal-mala-rso-2026-10-18",
       "outcomes": [
         {
-          "token_id": "41196279164346587313799676136050753548044683099010208660762750374723724859503",
-          "name": "Nottingham Forest FC"
+          "token_id": "72935389058870643996139379685688993226652023516101809522664774715476000363031",
+          "name": "Málaga CF"
         },
         {
-          "token_id": "68470328204742046736339125312010489479480554430678980244976749950039005575387",
-          "name": "Draw (Nottingham Forest FC vs. Arsenal FC)"
+          "token_id": "92093073968067741050628577918550075682970125010461092968013796806344662859350",
+          "name": "Draw (Málaga CF vs. Real Sociedad de Fútbol)"
         },
         {
-          "token_id": "73245421796922750466829041889725203633090129283314240032365966286987444361172",
-          "name": "Arsenal FC"
+          "token_id": "23728977538525002378394281650010692844743557778569266317533637126991985927237",
+          "name": "Real Sociedad de Fútbol"
+        }
+      ]
+    },
+    {
+      "id": "0xe708de3cf750f3de019bee27632ca4512a9e7395d70cc13cf523ef00e70d3600",
+      "title": "AC Milan vs. Atalanta BC",
+      "slug": "sea-mil-ata-2026-10-18",
+      "outcomes": [
+        {
+          "token_id": "85924778878545702157006148490498619468586964452901142005856193631050243705359",
+          "name": "AC Milan"
+        },
+        {
+          "token_id": "38088973868869130078379942397568792198311212293154313052379743631045562426915",
+          "name": "Draw (AC Milan vs. Atalanta BC)"
+        },
+        {
+          "token_id": "110639689930444918157485583348189294674717230410132336431836836488125796886008",
+          "name": "Atalanta BC"
         }
       ]
     }
